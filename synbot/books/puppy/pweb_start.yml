@@ -1,0 +1,23 @@
+---
+#start puppy web server
+- hosts: "{{pwebc | default('puppy_web')}}"
+  remote_user: "{{puppy_web_user}}"
+  gather_facts: false
+  vars_files:
+   - "../../roles/puppy_web/defaults/main.yml"
+   - "../../roles/puppy_web/vars/main.yml"
+  tasks:
+   - name: "start puppy web server"
+     shell: >
+      {{pub_set_bash}} && cd $PWEB_HOME &&
+      (nohup python pweb.py > pweb.log 2>&1 &)
+      executable=/bin/bash
+
+#      chdir={{puppy_web_home}}
+
+   - name: "waiting for puppy web to start..." 
+     wait_for: >
+      state=started timeout=90 
+      port={{puppy_web_port}} 
+
+#      {{pub_set_bash}} && python pweb.py >& /dev/null < /dev/null &

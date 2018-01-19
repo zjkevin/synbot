@@ -1,0 +1,7 @@
+---
+- name: "add a user on the host arg:user pwd" 
+  hosts: "{{hosts}}"
+  remote_user: root
+  gather_facts: false
+  roles:
+   - "../../roles/pub_user_add"

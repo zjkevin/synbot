@@ -1,0 +1,37 @@
+---
+##############################WARNNING###############################
+#hbase default vars
+#UNLESS NESSARY, the following configs should NOT be modified
+#Generally, we should overwrite it in a group var file.
+#####################################################################
+
+
+hbase_home:             "{{pub_install_app_home}}"
+hbase_log_dir:          "{{pub_install_log_root}}/hbase"
+hbase_user:  hadoop
+hbase_group: hadoop
+hbase_heapsize:         "{{hbase_heapsize}}"
+
+
+#hbase configs
+hbase_master_maxclockskew:            180000
+hbase_master_port:                    60000
+hbase_rootdir_port:                   9000
+hbase_rootdir:                        hbase
+hbase_client_write_buffer:            10485760
+hbase_cluster_distributed:            true
+
+
+#start and stop config
+hbasec_master_start_timeout:          90
+hbasec_master_stop_timeout:           90
+hbasec_master_port:                   60000
+hbasec_master_start_delay:            3
+hbasec_master_stop_delay:             3
+
+hbasec_regionserver_start_timeout:    90
+hbasec_regionserver_stop_timeout:     90
+hbasec_regionserver_port:             60020
+hbasec_regionserver_start_delay:      3
+hbasec_regionserver_stop_delay:       3
+

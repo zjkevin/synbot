@@ -1,0 +1,23 @@
+---
+- name: update source
+  shell: >
+    apt-get update
+    executable=/bin/bash
+    
+- name: sysstat
+  apt: pkg=sysstat state=present force=yes
+
+- name: python2.7-dev
+  apt: pkg=python2.7-dev state=present force=yes
+
+- name: python-setuptools
+  apt: pkg=python-setuptools state=present force=yes
+
+- name: python-pip
+  apt: pkg=python-pip state=present force=yes
+
+- name: bridge-utils
+  apt: pkg=bridge-utils state=present force=yes
+
+- name: sudo
+  apt: pkg=sudo state=present force=yes

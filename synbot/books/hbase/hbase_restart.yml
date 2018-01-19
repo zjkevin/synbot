@@ -1,0 +1,4 @@
+---
+#restart zk nodes
+- include: "hbase_stop.yml"
+- include: "hbase_start.yml"

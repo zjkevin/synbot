@@ -1,0 +1,91 @@
+---
+##############################WARNNING###############################
+#pub_install default vars
+#UNLESS NESSARY, the following configs should NOT be modified
+#Generally, we should overwrite it in a group var file.
+#####################################################################
+
+#################################
+#install configs for apps
+#################################
+pub_install_app_name:      "puppy_web"              #eg. "jdk"
+pub_install_app_version:   "2.0"                    #"1.0.1"
+pub_install_type:          "copy_install"           #unpack_install,copy_install
+pub_current_role:          "puppy_web"              #MUST be defined
+
+#local package file or source path, such as jdk.targ.gz or puppy_web
+#todo change it as public default
+pub_install_app_src:  "{{pub_install_pkgs_root}}/puppy/puppy{{pub_install_app_version}}_web"
+
+#the final path where the app will be installed to
+pub_install_app_home: "{{pub_install_apps_root}}/puppy{{pub_install_app_version}}_web"
+
+pub_install_app_group:     hadoop                      #default user group for app
+pub_install_app_user:      hadoop                      #default user name for app
+
+#todo redefine
+pub_install_temp_path: >
+ {{pub_install_temp_root}}/{{pub_current_role}}
+
+#todo redefine.
+pub_install_apps_roots:                            #public roots for app install
+ - dest: "{{pub_install_apps_root}}"
+ - dest: "{{pub_install_temp_root}}"
+   mode: "0755"
+ - dest: "{{pub_install_data_root}}"
+
+pub_install_app_paths:                           #list of pre paths
+ - dest: "{{pub_install_app_home}}"
+ - dest: "{{pub_install_temp_path}}"
+   mode: "0755"
+
+#system ENV template file, in templates folder
+#pub_install_app_envfile: "../../roles/java_install/templates/syn_javaenv.sh"
+pub_install_app_envfile: "syn_pwebenv.sh"
+
+pub_install_app_templates:                         #list of template files
+ - src: pweb.conf
+   dest: "{{pub_install_app_home}}"
+
+pub_install_app_links:     ~                         #list of pre links w
+# pub_install_app_links:                             #list of pre links w
+#  - src: "{{pub_install_app_home}}"
+#    link: "/{{pub_install_app_name}}"
+
+
+#python dependencies need pip to install
+pub_install_pip_modules:
+ - name: bottle
+ - name: requests
+ - name: paste
+ - name: jinja2
+ - name: kazoo
+ - name: pyes
+ - name: fake-factory                #test only
+ - name: nose
+ - name: webtest
+ # - name: jquery                     #do not need to install
+ # - name: bootstrap-paginator        #do not need to install
+ # - name: bootstrap                  #do not need to install
+
+
+# Runtime Dependencies
+# ========================
+# Python 2.7+                  The main language
+# Bottle 0.11.6                Web framework
+# Jinja2 2.7.1                 A high performance template engine
+# paste 1.7.5.1                The application server
+# kazoo 1.2.1                  Zookeeper client
+# pyes 0.20.1                  ElasticSearch client
+
+# jquery 1.11.0                Javascript lib
+# bootstrap 3.0.0              CSS framework
+# bootstrap-paginator 1.0      A Jquery plugin works with bootstrap
+
+
+# Development Dependencies
+# =========================
+# fake-factory 0.3.2           To generate fake test data
+# nose 1.3.0                   The Test framework 
+# webtest 2.0.7                A WSGI(http) Test tool
+

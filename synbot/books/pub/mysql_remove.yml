@@ -1,0 +1,37 @@
+---
+- name: "remove mysql" 
+  hosts: "{{hosts}}"
+  remote_user: root
+  gather_facts: false
+  tasks:
+   - name: "remove mysql"
+     shell: >
+      dpkg --get-selections |grep mysql | awk '{system("sudo aptitude purge -y "$1)}'
+      executable=/bin/bash
+
+   - name: "remove mysql_root_pwd_change.flag"
+     shell: >
+      if [ -f "{{pub_temp_root}}/mysql_root_pwd_change.flag" ];
+      then
+        rm "{{pub_temp_root}}/mysql_root_pwd_change.flag" &&
+        apt-get autoclean &&
+        rm -r /etc/mysql &&
+        rm -r /var/lib/mysql
+      fi
+      executable=/bin/bash
+
+   - name: "remove hive_privileges_on_hivedb.flag"
+     shell: >
+      if [ -f "{{pub_temp_root}}/hive_privileges_on_hivedb.flag" ];
+      then
+        rm "{{pub_temp_root}}/hive_privileges_on_hivedb.flag"
+      fi
+      executable=/bin/bash
+
+   - name: "remove azkaban_privileges_on_azkabandb.flag"
+     shell: >
+      if [ -f "{{pub_temp_root}}/azkaban_privileges_on_azkabandb.flag" ];
+      then
+        rm "{{pub_temp_root}}/azkaban_privileges_on_azkabandb.flag"
+      fi
+      executable=/bin/bash

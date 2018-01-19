@@ -1,0 +1,17 @@
+---
+##############################WARNNING###############################
+#synhold default vars
+#UNLESS NESSARY, the following configs should NOT be modified
+#Generally, we should overwrite it in a group var file.
+#####################################################################
+
+#hadoop runtime
+hadoop_user:                              hadoop
+hadoop_group:                             hadoop
+
+#common io configs
+io_file_buffer_size:                      4096                            #default 4096, 4096*N
+io_bytes_per_checksum:                    512                             #计算校验和的长度单位，不超过IO缓冲区大小，且建议能被其整除
+io_compression_codecs:                    ""                              #逗号分隔的IO压缩编码器列表，默认空。
+io_compression_codec_bzip2_library:       "system-native"                 #system-native,java-builtin
+io_seqfile_compress_blocksize:            1000000                         #The minimum block size for compression in block compressed  SequenceFiles

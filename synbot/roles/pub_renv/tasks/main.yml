@@ -1,0 +1,42 @@
+---
+- name: make remote renv directory
+  file: >
+   dest={{pub_renv_remote_path}} state=directory mode='0777'
+  tags:
+   - public
+
+- name: dump env to remote file
+  shell: >
+   {{pub_set_bash}} &&
+   echo renv: > {{pub_renv_remote_file}} && 
+   env | awk -F '=' '{print " "$1":","\""$2"\""}' >> {{pub_renv_remote_file}}
+   executable=/bin/bash
+  tags:
+   - public
+
+- name: make local temp directory
+  local_action: >
+   file dest={{pub_renv_local_path}} state=directory mode='0777'
+  tags:
+   - public
+
+- name: get remote env file
+  fetch: >
+   src={{pub_renv_remote_file}}
+   dest={{pub_renv_local_file}}
+   flat=yes
+  tags:
+   - public
+
+- name: load remote env vars
+  include_vars: "{{pub_renv_local_file}}"
+  tags:
+   - public
+
+- name: debug host vars
+  debug: msg="{{renv}}"
+  when: debug | d(false)
+  tags:
+   - public
+   - debug
+   - debugrenv

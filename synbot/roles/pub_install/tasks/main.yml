@@ -1,0 +1,170 @@
+---
+- name: "include vars file"
+  include_vars: "{{item}}"
+  with_items: app_include_vars
+  when: app_include_vars is defined
+  tags:
+   - config
+   - reconfig
+
+- name: "check/make public app directories"
+  file: >
+   dest={{item.dest}}
+   mode={{item.mode | default('0755')}}
+   state=directory owner=root  group=root
+  with_items: pub_install_apps_roots
+  when: pub_install_apps_roots is defined
+  tags:
+   - "{{pub_install_app_tag | default(pub_install_app_name)}}"
+   - deploy
+   - install
+   - unpack
+   - public
+   - prepare
+
+- name: "check/install pip modules"
+  pip: >
+   name={{item.name}}  state=present
+#   version={{item.version | d('_') }}
+  with_items: pub_install_pip_modules
+  when: >
+   pub_install_pip_modules is defined
+   and pub_install_pip_modules is not none
+  tags:
+   - "{{pub_install_app_tag | default(pub_install_app_name)}}"
+   - deploy
+   - install
+   - depend
+   - pip
+
+- name: "make app directories"
+  file: >
+   dest={{item.dest}}
+   state=directory
+   mode={{item.mode | default('0755')}}
+   owner={{item.user | default(pub_install_app_user)}}
+   group={{item.group | default(pub_install_app_group)}}
+  with_items: pub_install_app_paths
+  tags:
+   - "{{pub_install_app_tag | default(pub_install_app_name)}}"
+   - deploy
+   - install
+   - prepare
+   - unpack
+
+- name: "remove old packages"
+  shell: >
+   {{pub_set_bash}} &&
+   ([ ! -e {{pub_install_temp_path}} ] || rm -r {{pub_install_temp_path}})
+   executable=/bin/bash
+  when: pub_install_type == "unpack_install" and (flag_clean_old_packages | default(false))
+  tags:
+   - "{{pub_install_app_tag | default(pub_install_app_name)}}"
+   - deploy
+   - install
+   - unpack
+   - rmbad
+
+- name: "upload package file"
+  copy: >
+   src="{{pub_install_app_src}}"
+   dest={{pub_install_temp_path}}
+   mode=0755
+   owner={{pub_install_app_user}} 
+   group={{pub_install_app_group}}
+  tags:
+   - "{{pub_install_app_tag | default(pub_install_app_name)}}"
+   - deploy
+   - install
+   - unpack
+  when: pub_install_type == "unpack_install"
+
+- name: "upload install folder"
+  copy: >
+   src={{pub_install_app_src}}
+   dest={{pub_install_app_home}}/../
+   mode=0755
+   owner={{pub_install_app_user}} 
+   group={{pub_install_app_group}}
+  when: pub_install_type == "copy_install"
+  tags:
+   - "{{pub_install_app_tag | default(pub_install_app_name)}}"
+   - deploy
+   - install
+
+- name: "unpack install package"
+  shell: >
+   {{pub_set_bash}} &&
+   tar -xzf {{pub_install_temp_path}}/{{pub_install_app_src | basename}} &&
+   chown -R {{pub_install_app_user}}:{{pub_install_app_group}} {{pub_install_app_home}}
+   executable=/bin/bash chdir={{pub_install_apps_root}}
+  with_items: 
+   - "{{pub_install_temp_path}}"
+  when: pub_install_type == "unpack_install"
+  tags:
+   - "{{pub_install_app_tag | default(pub_install_app_name)}}"
+   - deploy
+   - install
+   - unpack
+
+- name: put env file to profile.d
+  template: >
+   src=../../roles/{{pub_current_role}}/templates/{{pub_install_app_envfile}}
+   dest="/etc/profile.d"
+   owner={{pub_install_app_user}}
+   group={{pub_install_app_group}}
+   backup=yes
+  when: pub_install_app_envfile is defined
+  tags:
+   - "{{pub_install_app_tag | default(pub_install_app_name)}}"
+   - deploy
+   - install
+   - config
+   - reconfig
+
+#todo check item.dest
+- name: update app configs
+  template: >
+   src=../../roles/{{pub_current_role}}/templates/{{item.src}}
+   dest={{item.dest | default(item.src)}}
+   mode={{item.mode | default(0755)}}
+   owner={{item.user | default(pub_install_app_user)}}
+   group={{item.group | default(pub_install_app_group)}}
+   backup=yes
+  with_items: pub_install_app_templates
+  when: pub_install_app_templates is defined
+  tags:
+   - "{{pub_install_app_tag | default(pub_install_app_name)}}"
+   - deploy
+   - install
+   - config
+   - reconfig
+
+#update files
+# - name: update files
+#   file: >
+#    src=../../roles/{{pub_current_role}}/templates/{{item.src}}
+#    dest={{item.dest}}
+#    mode={{item.mode | default(0755)}}
+#    owner={{item.user | default(pub_install_app_user)}}
+#    group={{item.group | default(pub_install_app_group)}}
+#    backup=yes
+#   with_items: pub_update_app_files
+#   when: pub_update_app_files is not none 
+
+- name: "create file/path symbolinks"
+  file: >
+    src={{item.src}}
+    dest={{item.link}}
+    state=link
+    mode={{item.mode | default(0755)}}
+    owner={{item.user | default(pub_install_app_user)}} 
+    group={{item.group | default(pub_install_app_group)}}
+  with_items: pub_install_app_links
+  when: pub_install_app_links is defined
+  tags:
+   - "{{pub_install_app_tag | default(pub_install_app_name)}}"
+   - deploy
+   - install
+   - prelink
+   - reconfig

@@ -1,0 +1,40 @@
+<configuration>
+<![CDATA[
+{# 全局变量定义 #}
+{% set hivec = hivec %}
+{# END全局变量定义 #}
+]]>
+      <property>
+          <name>templeton.port</name>
+          <value>50111</value>
+      </property>
+      <property>
+          <name>templeton.hive.archive</name>
+          <value>hdfs:///apps/templeton/{{hive_tar_gz}}</value>
+      </property>
+      <property>
+          <name>templeton.hive.path</name>
+          <value>{{hive_tar_gz}}/apache-hive-0.13.1-bin/bin/hive</value>
+      </property>
+
+       <property>
+           <name>templeton.hive.home</name>
+           <value>{{hive_tar_gz}}/apache-hive-0.13.1-bin</value>
+       </property>
+       <property>
+            <name>templeton.hcat.home</name>
+            <value>{{hive_tar_gz}}/apache-hive-0.13.1-bin/hcatalog</value>
+       </property>
+       <property>
+           <name>templeton.hive.properties</name>
+           <value>hive.metastore.local=false,hive.metastore.uris=thrift://{{groups[hivec][0]}}.dev.s:10000,hive.metastore.sasl.enabled=false,hive.cli.print.header=true</value>
+       </property>
+       <property>
+           <name>templeton.exec.timeout</name>
+           <value>60000</value>
+       </property>
+  <property>
+    <name>templeton.libjars</name>
+    <value>/usr/lib/zookeeper-3.4.6/zookeeper-3.4.6.jar</value>
+  </property>
+</configuration>

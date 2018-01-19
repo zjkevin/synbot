@@ -1,0 +1,69 @@
+---
+#- name: build-essential
+#  shell: >
+#    apt-get install build-essential
+
+- name: python2.7-dev
+  shell: >
+    apt-get install python2.7-dev --force-yes -y
+
+#- name: python-setuptools
+#  shell: >
+#    apt-get install python-setuptools
+
+- name: MySQL-python
+  shell: >
+    apt-get install python-mysqldb --force-yes -y
+
+- name: pip soft
+  shell: >
+    export PIP_INDEX_URL={{pip_index_url}}
+
+- name: fabric
+  shell: >
+    pip install {{item.pack}} --no-index --find-links {{pip_index_url}}
+  with_items: pip_packages
+
+#- name: ansible
+#  shell: >
+#    pip install ansible --no-index --find-links http://192.168.50.31:8080
+
+- name: kazoo
+  shell: >
+    pip install kazoo --no-index --find-links http://192.168.50.31:8080
+
+- name: jinja2
+  shell: >
+    pip install jinja2 --no-index --find-links http://192.168.50.31:8080
+
+- name: requests
+  shell: >
+    pip install requests --no-index --find-links http://192.168.50.31:8080
+
+- name: paste
+  shell: >
+    pip install paste --no-index --find-links http://192.168.50.31:8080
+
+- name: bottle
+  shell: >
+    pip install bottle --no-index --find-links http://192.168.50.31:8080
+
+- name: thrift
+  shell: >
+    pip install thrift --no-index --find-links http://192.168.50.31:8080
+
+- name: pyes
+  shell: >
+    pip install pyes --no-index --find-links http://192.168.50.31:8080
+
+- name: nose
+  shell: >
+    pip install nose --no-index --find-links http://192.168.50.31:8080
+
+- name: happybase
+  shell: >
+    pip install happybase --no-index --find-links http://192.168.50.31:8080
+
+- name: behave
+  shell: >
+    pip install behave --no-index --find-links http://192.168.50.31:8080

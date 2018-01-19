@@ -1,0 +1,40 @@
+# The configuration for syndata-core
+{# 全局变量定义 #}
+{% set es_list = 'es' %}
+{% set zk_list = 'zookeeper' %}
+{% set hbase_master = 'hbase_master' %}
+{% set hdfs_nn= 'hdfs_nn' %}
+{% set hivec = 'hivec' %}
+{% set sparkc = 'sparkc' %}
+{# END全局变量定义 #}
+# The configuration for syndata-core
+apps:
+    - app_id: synhold
+      url_root: /api/synhold/v1 # Needn't end with a "/".
+      es_hosts:
+        {% for es_node in groups[es_list] %}
+         - {{es_node}}:9200
+        {% endfor %}
+
+      es_settings:
+          number_of_replicas: 1
+          refresh_interval: 60s
+      hbase_conn_info:
+          host: {{groups[hbase_master][0]}}
+          port: 9090
+          size: 10
+    # - app_id: synlift
+    #   url_root: /api/synlift/v1
+    #   search_result_path: /synway/synlift/search/result
+    #   local_result_path:  /var/syndata/data/tmp
+    #   export_mrh2r_path: /synway/synlift/lib/mrh2r
+    #   export_main_class: cn.synway.synlift.mrh2r.Main
+    #   sync_mapr_interval: 2 #seconds
+    #   sync_mapr_max_try: 50
+    #   hive_user: hadoop
+    #   webhdfs_url: http://p5n4:50070/webhdfs/v1
+    #   pyhs2_conn_info:
+    #       host: p5n1
+    #       port: 11000
+    #       user: hadoop
+    #       password: hadoop

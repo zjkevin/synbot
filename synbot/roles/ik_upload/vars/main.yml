@@ -1,0 +1,36 @@
+---
+##############################WARNNING###############################
+#pub_install default vars
+#UNLESS NESSARY, the following configs should NOT be modified
+#Generally, we should overwrite it in a group var file.
+#####################################################################
+
+#################################
+#install configs for apps
+#################################
+pub_install_app_name:      "elasticsearch"          #eg. "jdk"
+pub_install_app_version:   "1.0.1"                  #"1.0.1"
+pub_install_type:          "unpack_install"         #unpack_install,copy_install
+pub_current_role:          "es_install"             #MUST be defined
+
+#custorm config to generate configs for "pub_install"
+es_install_pkgname:      "{{pub_install_app_name}}-{{pub_install_app_version}}"
+
+
+#the final path where the app will be installed to
+pub_install_app_home: "{{pub_install_apps_root}}/{{es_install_pkgname}}"
+
+pub_install_app_group:     hadoop                     #default user group for app
+pub_install_app_user:      hadoop                     #default user name for app
+
+es_group: "{{pub_install_app_group}}"
+es_user: "{{pub_install_app_user}}"
+
+pub_install_app_paths:                          #list of pre paths
+ - dest: "{{pub_install_app_home}}/plugins/ik-analyzer"
+
+
+pub_install_app_templates:                        #list of template files
+ - src: ik-ext-1.0.0-full.jar
+   dest: "{{pub_install_app_home}}/plugins/ik-analyzer"
+

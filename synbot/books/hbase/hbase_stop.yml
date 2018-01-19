@@ -1,0 +1,50 @@
+---
+#stop hbase master
+- hosts: "{{hbasec}}_master"
+  remote_user: "{{hbase_user}}"
+  gather_facts: false
+  vars_files:
+   - "../../roles/hbase_install/defaults/main.yml"
+   - "../../roles/hbase_install/vars/main.yml"
+  tasks:
+   - name: "stop master"
+     shell: >
+      {{pub_set_bash}} &&
+      hbase-daemon.sh stop master
+      executable=/bin/bash
+      
+   - name: "waitting..." 
+     wait_for: >
+      state=stopped timeout={{hbasec_master_stop_timeout}} port={{hbasec_master_port}} delay={{hbasec_master_stop_delay}}
+
+#stop hbase regionserver
+- hosts: "{{hbasec}}_regionserver"
+  remote_user: "{{hbase_user}}"
+  gather_facts: false
+  vars_files:
+   - "../../roles/hbase_install/defaults/main.yml"
+   - "../../roles/hbase_install/vars/main.yml"
+  tasks:
+   - name: "stop regionserver"
+     shell: >
+      {{pub_set_bash}} &&
+      hbase-daemon.sh stop regionserver
+      executable=/bin/bash
+      
+   - name: "waitting..." 
+     wait_for: >
+      state=stopped timeout={{hbasec_regionserver_stop_timeout}} port={{hbasec_regionserver_port}} delay={{hbasec_regionserver_stop_delay}}
+
+#stop thrift
+- hosts: "{{hbasec}}_master"
+  remote_user: "{{hbase_user}}"
+  gather_facts: false
+  vars_files: 
+   - "../../roles/hbase_install/defaults/main.yml"
+   - "../../roles/hbase_install/vars/main.yml"
+  tasks:
+   - name: "stop thrift"
+     shell: >
+      {{pub_set_bash}} &&
+      hbase-daemon.sh stop thrift
+      executable=/bin/bash

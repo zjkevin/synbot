@@ -1,0 +1,91 @@
+---
+# virtual machine resource
+host_conf:
+    - manager1:
+        mem: 12
+        current_mem: 12
+        vcpu: 2
+        swap_size: 1G
+        mounts:
+          - mount:
+            name: nn
+            disk: /dev/sdc
+            size: 100G
+          - mount:
+            name: zk
+            disk: /dev/sdc
+            size: 100G
+          - mount:
+            name: log
+            disk: /dev/sdc
+            size: 10G
+          - mount:
+            name: tmp
+            disk: /dev/sdc
+            size: 10G           
+        apps:
+          - zk
+          - ntp_servers
+          - hbase_master
+          - hadoop_namenode
+          - hadoop_resource_manager
+          - hadoop_history_job_manager
+          - hive
+        hosts: 
+         - p1n1
+    - manager_backup:
+        mem: 12
+        current_mem: 12
+        vcpu: 2
+        swap_size: 1G
+        mounts:
+          - mount:
+            name: nn
+            disk: /dev/sdc
+            size: 100G
+        apps:
+          - hbase_master
+          - hadoop_namenode_backup
+          - hadoop_resource_manager
+        hosts: 
+         - p1n2
+    - datanode1:
+        mem: 12
+        current_mem: 12
+        vcpu: 2
+        swap_size: 1G
+        mounts:
+         - mount:
+           name: es
+           disk: /dev/sdc
+           size: 10G
+         - mount:
+           name: jn
+           disk: /dev/sdc
+           size: 10G
+         - mount:
+           name: dn
+           disk: /dev/sdc
+           size: 10G           
+         - mount:
+           name: log
+           disk: /dev/sdc
+           size: 10G
+         - mount:
+           name: tmp
+           disk: /dev/sdc
+           size: 10G
+        apps:
+          - es
+          - hbase_regionserver
+          - hadoop_datanode
+          - hadoop_journal
+        hosts:
+         - "p1n[3~10]"
+# cluster app config
+cluster_app_config:
+    es_heap_size: 10g
+    hbase_heapsize: 10g
+    spark_executor_memory: 10g
+    nodemanager_resource_memory: 8192
+    esc_name: es_test

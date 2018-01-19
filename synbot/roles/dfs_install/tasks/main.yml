@@ -1,0 +1,12 @@
+---
+- include: "../../pub_install/tasks/main.yml"
+
+- name: "clean hdfs(hadoop) directories"
+  shell: "[ -d {{item}} ] && rm -r -f {{item}}/*"
+  with_items: hadoop_data_paths
+  when: flag_clean_dfs_data | default(false)
+  tags:
+   - hdfs
+   - dfs
+   - reconfig
+

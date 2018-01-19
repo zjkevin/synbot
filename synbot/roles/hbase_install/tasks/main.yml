@@ -1,0 +1,72 @@
+---
+- include: "../../pub_install/tasks/main.yml"
+
+#- name: "remove old packages"
+#  shell: >
+#   {{pub_set_bash}} &&
+#   ([ ! -e {{pub_install_temp_path}} ] || rm -r {{pub_install_temp_path}})
+#   executable=/bin/bash
+#  when: pub_install_type == "unpack_install" and (flag_clean_old_packages | default(false))
+#  tags:
+#   - "{{pub_install_app_tag | default(pub_install_app_name)}}"
+#   - deploy
+#   - install
+#   - unpack
+#   - rmbad 
+#
+#- name: make public directories
+#  file: >
+#   dest={{item.dest}}
+#   state=directory
+#   mode={{item.mode | default('0755')}}
+#   owner={{pub_install_app_user | default('root')}}
+#   group={{pub_install_app_group | default('root')}}
+#  with_items: pub_install_app_paths
+#  tags:
+#   - public
+#
+#- name: "upload package file"
+#  copy: >
+#   src="{{pub_install_app_src}}"
+#   dest={{pub_install_temp_path}}
+#   mode=0755
+#   owner={{pub_install_app_user}} 
+#   group={{pub_install_app_group}}
+#  tags:
+#   - "{{pub_install_app_tag | default(pub_install_app_name)}}"
+#   - deploy
+#   - install
+#   - unpack
+#  when: pub_install_type == "unpack_install"
+#
+#- name: "unpack install package"
+#  shell: >
+#   {{pub_set_bash}} &&
+#   tar -xzvf {{pub_install_temp_path}}/{{hbase_install_pkgname | basename}}.tar.gz &&
+#   chown -R {{pub_install_app_user}}:{{pub_install_app_group}} {{pub_install_app_home}}
+#   executable=/bin/bash chdir={{pub_install_apps_root}}
+#  with_items: 
+#   - "{{pub_install_temp_path}}"
+#  when: pub_install_type == "unpack_install"
+#  tags:
+#   - "{{pub_install_app_tag | default(pub_install_app_name)}}"
+#   - deploy
+#   - install
+#   - unpack
+#
+#- name: update app configs
+#  template: >
+#   src=../../roles/{{pub_current_role}}/templates/{{item.src}}
+#   dest={{item.dest | default(item.src)}}
+#   mode={{item.mode | default(0755)}}
+#   owner={{item.user | default(pub_install_app_user)}}
+#   group={{item.group | default(pub_install_app_group)}}
+#   backup=yes
+#  with_items: pub_install_app_templates
+#  when: pub_install_app_templates is not none
+#  tags:
+#   - "{{pub_install_app_tag | default(pub_install_app_name)}}"
+#   - deploy
+#   - install
+#   - config
+#   - reconfig

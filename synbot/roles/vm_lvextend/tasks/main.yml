@@ -1,0 +1,15 @@
+---
+- name: "update lvextend.py"
+  template: >
+   src={{cntemplet_url}}/{{inventory_hostname}}_lvextend.py
+   dest=/root
+   mode='0755'
+   owner='root'
+   group='root'
+
+- name: "excute lvextend"
+  shell: >
+    {{pub_set_bash}} &&
+    python /root/{{inventory_hostname}}_lvextend.py &&
+    rm /root/{{inventory_hostname}}_lvextend.py
+    executable=/bin/bash  

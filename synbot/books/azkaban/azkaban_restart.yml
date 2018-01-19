@@ -1,0 +1,4 @@
+---
+#restart azkaban
+- include: "azkaban_stop.yml"
+- include: "azkaban_start.yml"

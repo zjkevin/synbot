@@ -1,0 +1,167 @@
+---
+#stop name nodes
+- hosts: "{{dfsc}}_jn"
+  remote_user: hadoop
+  gather_facts: false
+  vars_files:
+   - "../../roles/dfs_install/defaults/main.yml"
+   - "../../roles/dfs_install/vars/main.yml"
+  tasks:
+   - name: "stop journal nodes"
+     shell: >
+      {{pub_set_bash}} &&
+      hadoop-daemon.sh --script hdfs stop journalnode
+      executable=/bin/bash
+      
+   - name: "waitting..." 
+     wait_for: >
+      state=stopped timeout=90 port=8485 delay=3
+
+- hosts: "{{dfsc}}_nn"
+  remote_user: hadoop
+  gather_facts: false
+  vars_files:
+   - "../../roles/dfs_install/defaults/main.yml"
+   - "../../roles/dfs_install/vars/main.yml"
+  tasks:
+   - name: "stop zkfc"
+     shell: >
+      {{pub_set_bash}} &&
+      hadoop-daemon.sh stop zkfc
+      executable=/bin/bash
+
+   - name: "waitting..." 
+     wait_for: >
+      state=stopped timeout=90 port={{dfs_zkfc_rpc_port}} delay={{dfsc_start_delay}}
+
+- hosts: "{{dfsc}}_nb"
+  remote_user: hadoop
+  gather_facts: false
+  vars_files:
+   - "../../roles/dfs_install/defaults/main.yml"
+   - "../../roles/dfs_install/vars/main.yml"
+  tasks:
+   - name: "stop zkfc"
+     shell: >
+      {{pub_set_bash}} &&
+      hadoop-daemon.sh stop zkfc
+      executable=/bin/bash
+
+   - name: "waitting..." 
+     wait_for: >
+      state=stopped timeout=90 port={{dfs_zkfc_rpc_port}} delay={{dfsc_start_delay}}
+
+- hosts: "{{dfsc}}_nn"
+  remote_user: hadoop
+  gather_facts: false
+  vars_files:
+   - "../../roles/dfs_install/defaults/main.yml"
+   - "../../roles/dfs_install/vars/main.yml"
+  tasks:
+   - name: "stop name nodes"
+     shell: >
+      {{pub_set_bash}} &&
+      hadoop-daemon.sh --script hdfs stop namenode
+      executable=/bin/bash
+      
+   - name: "waitting..." 
+     wait_for: >
+      state=stopped timeout={{dfsc_stop_timeout}} port={{dfs_namenode_rpc_port}} delay={{dfsc_stop_delay}}
+
+- hosts: "{{dfsc}}_nb"
+  remote_user: hadoop
+  gather_facts: false
+  vars_files:
+   - "../../roles/dfs_install/defaults/main.yml"
+   - "../../roles/dfs_install/vars/main.yml"
+  tasks:
+   - name: "stop name nodes"
+     shell: >
+      {{pub_set_bash}} &&
+      hadoop-daemon.sh --script hdfs stop namenode
+      executable=/bin/bash
+      
+   - name: "waitting..." 
+     wait_for: >
+      state=stopped timeout={{dfsc_stop_timeout}} port={{dfs_namenode_rpc_port}} delay={{dfsc_stop_delay}}
+
+
+#stop data nodes
+- hosts: "{{dfsc}}_dn"
+  remote_user: hadoop
+  gather_facts: false
+  vars_files:
+   - "../../roles/dfs_install/defaults/main.yml"
+   - "../../roles/dfs_install/vars/main.yml"
+  tasks:
+   - name: "stop data nodes"
+     shell: >
+      {{pub_set_bash}} &&
+      hadoop-daemon.sh --script hdfs stop datanode
+      executable=/bin/bash
+
+   - name: "waitting..." 
+     wait_for: >
+      state=stopped timeout={{dfsc_stop_timeout}} port={{dfs_datanode_rpc_port}} delay={{dfsc_stop_delay}}
+
+#stop resource managers
+- hosts: "{{dfsc}}_rm"
+  remote_user: hadoop
+  gather_facts: false
+  vars_files:
+   - "../../roles/dfs_install/defaults/main.yml"
+   - "../../roles/dfs_install/vars/main.yml"
+  tasks:
+   - name: "stop resource managers"
+     shell: >
+      {{pub_set_bash}} &&
+      yarn-daemon.sh stop resourcemanager
+      executable=/bin/bash
+      
+   - name: "waitting..." 
+     wait_for: >
+      state=stopped timeout={{dfsc_stop_timeout}} port={{yarn_resourcemanager_port}} delay=3
+     
+   - name: "waitting..." 
+     wait_for: >
+      state=stopped timeout={{dfsc_stop_timeout}} port={{yarn_resourcemanager_scheduler_port}} delay=1
+
+   - name: "waitting..." 
+     wait_for: >
+      state=stopped timeout={{dfsc_stop_timeout}} port={{yarn_resourcemanager_resourcetracker_port}} delay=1
+      
+#stop node managers
+- hosts: "{{dfsc}}_nm"
+  remote_user: hadoop
+  gather_facts: false
+  vars_files:
+   - "../../roles/dfs_install/defaults/main.yml"
+   - "../../roles/dfs_install/vars/main.yml"
+  tasks:
+   - name: "stop node managers"
+     shell: >
+      {{pub_set_bash}} &&
+      yarn-daemon.sh stop nodemanager
+      executable=/bin/bash
+
+   - name: "waitting..." 
+     wait_for: >
+      state=stopped timeout={{dfsc_stop_timeout}} port={{yarn_nodemanager_localizer_port}} delay=3
+
+   - name: "waitting..." 
+     wait_for: >
+      state=stopped timeout={{dfsc_stop_timeout}} port={{yarn_nodemanager_webapp_port}} delay=3
+
+#stop history managers
+- hosts: "{{dfsc}}_hm"
+  remote_user: hadoop
+  gather_facts: false
+  vars_files:
+   - "../../roles/dfs_install/defaults/main.yml"
+   - "../../roles/dfs_install/vars/main.yml"
+  tasks:
+   - name: "stop history managers"
+     shell: >
+      {{pub_set_bash}} &&
+      mr-jobhistory-daemon.sh stop historyserver
+      executable=/bin/bash

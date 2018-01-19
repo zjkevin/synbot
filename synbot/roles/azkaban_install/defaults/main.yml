@@ -1,0 +1,21 @@
+---
+##############################WARNNING###############################
+#azkaban default vars
+#UNLESS NESSARY, the following configs should NOT be modified
+#Generally, we should overwrite it in a group var file.
+#####################################################################
+
+azkaban_install_log:      "{{pub_install_log_root}}/azkaban"
+azkaban_home:             "{{pub_install_app_home}}"
+azkaban_user:              hadoop
+azkaban_group:             hadoop
+
+##################################
+##azkaban runtime configs
+##################################
+azkaban_start_server_port: 12321
+azkaban_server_port:       8081
+azkaban_start_timeout:     10
+azkaban_start_delay:       3
+azkaban_stop_timeout:      10
+azkaban_stop_delay:        3 

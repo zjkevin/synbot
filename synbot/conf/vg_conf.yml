@@ -1,0 +1,15 @@
+---
+# the vg on the HV for vm 
+# default os:vgos app:vgapp 
+poc1: {"os":vgos,"app":vgapp}
+poc2: {"os":vgos,"app":vgapp}
+poc3: {"os":vgos,"app":vgapp}
+poc4: {"os":vgos,"app":vgapp}
+poc5: {"os":vgos,"app":vgapp}
+poc6: {"os":vgos,"app":vgapp}
+poc7: {"os":vgos,"app":vgapp}
+poc8: {"os":vgos,"app":vgapp}
+poc9: {"os":vgos,"app":vgapp}
+poc10: {"os":vgos,"app":vgapp}
+poc11: {"os":vgos,"app":vgapp}
+poc99: {"os":vgapp,"app":vgapp}

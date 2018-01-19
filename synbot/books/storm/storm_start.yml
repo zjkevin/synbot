@@ -1,0 +1,47 @@
+---
+# "start storm nodes"
+- hosts: "{{stormc}}_master"
+  remote_user: "{{storm_user}}"
+  gather_facts: false
+  vars_files:
+   - "../../roles/storm_install/defaults/main.yml"
+   - "../../roles/storm_install/vars/main.yml"
+  tasks:
+   - name: "start storm nimbus(master) node"
+     shell: >
+      {{pub_set_bash}} &&
+      $(nohup storm nimbus > {{pub_install_log_root}}/storm/storm_nimbus.log 2>&1 &) &&
+      wait_jps.sh storm.daemon.nimbus 120
+      executable=/bin/bash
+  vars:
+   timeout: 120
+   pname: "backtype.storm.daemon.nimbus"
+
+- hosts: "{{stormc}}_slave"
+  remote_user: "{{storm_user}}"
+  gather_facts: false
+  vars_files:
+   - "../../roles/storm_install/defaults/main.yml"
+   - "../../roles/storm_install/vars/main.yml"
+  tasks:
+   - name: "start storm supervisors(slaves)"
+     shell: >
+      {{pub_set_bash}} &&
+      $(nohup storm supervisor > {{pub_install_log_root}}/storm/storm_supervisor.log 2>&1 &) &&
+      wait_jps.sh storm.daemon.supervisor 120
+      executable=/bin/bash
+
+- name: "start storm master"
+  hosts: "{{stormc}}_master"
+  remote_user: "{{storm_user}}"
+  gather_facts: false
+  vars_files:
+   - "../../roles/storm_install/defaults/main.yml"
+   - "../../roles/storm_install/vars/main.yml"
+  tasks:
+   - name: "start storm web ui"
+     shell: >
+      {{pub_set_bash}} &&
+      $(nohup storm ui > {{pub_install_log_root}}/storm/storm_web_ui.log 2>&1 &) &&
+      wait_jps.sh storm.ui.core 120
+      executable=/bin/bash

@@ -1,0 +1,20 @@
+---
+- name: "shell cmd" 
+  hosts: "{{hosts}}"
+  remote_user: root
+  gather_facts: false
+  tasks:
+   - name: "shell cmd"
+     shell: >
+        sed -i '/ulimit/'d /etc/profile &&
+        sed -i '$a root soft memlock unlimited' /etc/security/limits.conf &&
+        sed -i '$a root hard memlock unlimited' /etc/security/limits.conf &&
+        sed -i '$a root soft nofile 65535' /etc/security/limits.conf &&
+        sed -i '$a root hard nofile 65535' /etc/security/limits.conf &&
+        sed -i '$a * soft memlock unlimited' /etc/security/limits.conf &&
+        sed -i '$a * hard memlock unlimited' /etc/security/limits.conf &&
+        sed -i '$a * soft nofile 65535' /etc/security/limits.conf &&
+        sed -i '$a * hard nofile 65535' /etc/security/limits.conf
+        executable=/bin/bash
+  vars:
+   hosts: installvm

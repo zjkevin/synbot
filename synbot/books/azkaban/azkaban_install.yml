@@ -1,0 +1,6 @@
+---
+- hosts: "{{azkaban}}"
+  remote_user: root
+  gather_facts: false
+  roles:
+   - "../../roles/azkaban_install"

@@ -1,0 +1,31 @@
+---
+##############################WARNNING###############################
+#storm default vars
+#UNLESS NESSARY, the following configs should NOT be modified
+#Generally, we should overwrite it in a group var file.
+#####################################################################
+
+storm_home:             "{{pub_install_app_home}}"
+storm_data_home:        "{{pub_install_data_root}}/stormdata"
+
+storm_group: "{{pub_install_app_group}}"
+storm_user: "{{pub_install_app_user}}"
+
+#################################
+#storm runtime configs
+#################################
+storm_local_dir:                  "{{storm_data_home}}"
+storm_nimbus_host:                "{{groups['%s_master' % stormc] | first}}" #use first host as default
+storm_supervisor_slots_ports:
+ - 6700
+ - 6701
+ - 6702
+ - 6703
+ - 6704
+
+#storm cluster admin configs , custom only
+stormc_zkc:                        "{{zkc | default('zookeeper') }}"
+stormc_start_delay:                3
+stormc_start_timeout:              90
+stormc_stop_delay:                 3
+stormc_stop_timeout:               90

@@ -1,0 +1,7 @@
+---
+install_steps:
+  - step_name: cluster_restart
+    state: 0
+    cmd: ansible-playbook books/pub/cluster_start.yml
+    force_continue: 0
+    retry: 1

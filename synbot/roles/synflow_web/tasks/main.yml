@@ -1,0 +1,13 @@
+---
+- include : "../../pub_install/tasks/main.yml"
+
+- name: get curl
+  local_action:
+   apt pkg=curl state=present force=yes
+  when: pub_install_app_version == "1.0" and (runonce | d(false) )
+
+- name: get curl
+  local_action:
+   shell >
+    $(curl -X POST 'http://{{groups[esc] | first}}:{{es_http_port}}/sys_meta/config/default' -d '{}')
+  when: pub_install_app_version == "1.0" and (runonce | d(false) )

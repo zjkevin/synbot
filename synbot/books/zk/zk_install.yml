@@ -1,0 +1,6 @@
+---
+- hosts: "{{zkc}}"
+  remote_user: root
+  gather_facts: true
+  roles:
+   - "../../roles/zk_install"

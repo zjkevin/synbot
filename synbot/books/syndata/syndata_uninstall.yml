@@ -1,0 +1,15 @@
+---
+#uninstall syndata
+- hosts: "{{hosts}}"
+  remote_user: root
+  gather_facts: false
+  vars_files:
+   - "../../roles/syndata_install/defaults/main.yml"
+  tasks:
+   - name: "uninstall syndata"
+     shell: >
+      {{pub_set_bash}} &&
+      pip uninstall -y synhold &&
+      pip uninstall -y jwmphive &&
+      pip uninstall -y syntools
+      executable=/bin/bash

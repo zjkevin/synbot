@@ -1,0 +1,55 @@
+---
+- name: make public directories
+  file: >
+   dest={{item.dest}}
+   state=directory
+   mode={{item.mode | default('0755')}}
+   owner={{item.user | default('root')}}
+   group={{item.group | default('root')}}
+  with_items: pub_init_paths
+  tags:
+   - public
+
+- name: "update public configs"
+  template: >
+   src={{item.src}}
+   dest={{item.dest | default(item.src)}}
+   mode={{item.mode | default('0755')}}
+   owner={{item.user | default('root')}}
+   group={{item.group | default('root')}}
+   backup=no
+  with_items: pub_init_templates
+  register: init_once
+  tags:
+   - public
+
+- name: "update apt cache"
+  apt: update_cache=yes
+  tags:
+   - public
+
+- name: "debug init state"
+  debug: msg="{{init_once}}"
+  when: debug | d(false)
+  tags:
+   - public
+   - debug
+
+- name: "create file/path symbolinks"
+  file: >
+    src=/usr/share/zoneinfo/Asia/Shanghai
+    dest=/etc/localtime
+    state=link force=yes
+    owner=root group=root
+  when:  (forceinit | d(false) ) or init_once.changed
+  tags:
+   - public
+
+- name: "execute public scripts"
+  shell: >
+   {{pub_set_bash}} && {{item.cmd}}
+   executable=/bin/bash
+  with_items: pub_init_shells
+  when: (forceinit | d(false) ) or init_once.changed
+  tags:
+   - public

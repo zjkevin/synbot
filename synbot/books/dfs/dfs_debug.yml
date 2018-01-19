@@ -1,0 +1,12 @@
+---
+#start data nodes
+- hosts: "{{dfsc}}_nn"
+  remote_user: hadoop
+  gather_facts: false
+  vars_files:
+   - roles/dfs_common/defaults/main.yml
+   - "group_vars/{{dfsc}}"
+  tasks:
+   - name: "debug vars"
+     debug: msg="{{hostvars[item]}}"
+     with_items: "groups.{{dfsc}}_nn"

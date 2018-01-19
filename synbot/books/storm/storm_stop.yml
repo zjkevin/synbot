@@ -1,0 +1,16 @@
+---
+#stop storm nodes
+- hosts: "{{stormc}}"
+  remote_user: "{{storm_user}}"
+  gather_facts: false
+  vars_files:
+   - "../../roles/storm_install/defaults/main.yml"
+   - "../../roles/storm_install/vars/main.yml"
+  tasks:
+   - name: "stop storm nodes"
+     shell: >
+      {{pub_set_bash}} && jps -l | grep storm | awk '{system("kill -TERM "$1)}'
+      executable=/bin/bash
+
+# {{pub_set_bash}} && jps -l | grep storm | awk '{system("kill -9 "$1)}'
+#-TERM

@@ -1,0 +1,15 @@
+---
+#the final path where the jars will be upload to
+pub_install_app_home: "{{pub_install_apps_root}}/jartemp"
+
+pub_install_app_paths:                          #list of pre paths
+ - dest: "{{pub_install_app_home}}/idx"
+
+pub_install_app_group:     hadoop                     #default user group for app
+pub_install_app_user:      hadoop                     #default user name for app
+
+pub_install_jars:                        #list of template files
+ - src: idxmr4es-1.0.0.jar
+   dest: "{{pub_install_app_home}}/idx"
+ - src: idxmr4hb-1.0.0.jar
+   dest: "{{pub_install_app_home}}/idx"

@@ -1,0 +1,9 @@
+---
+dependencies:
+ - {role: "../../roles/pub_init"}
+ - {role: "../../roles/es_install"}
+
+#####################################
+# DO NOT include pub_install here
+# - {role: "../../roles/pub_install"}
+#####################################

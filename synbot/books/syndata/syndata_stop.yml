@@ -1,0 +1,17 @@
+---
+#stop spark
+- hosts: "{{hosts}}"
+  remote_user: "{{syndata_user}}"
+  gather_facts: false
+  vars_files:
+   - "../../roles/syndata_install/defaults/main.yml"
+   - "../../roles/syndata_install/vars/main.yml"
+  tasks:
+   - name: "stop syndata"
+     shell: >
+      {{pub_set_bash}} && ps aux | grep ./syndata.py | awk 'NR==1{system("kill "$2)}'
+      executable=/bin/bash
+
+   - name: "waitting..." 
+     wait_for: >
+      state=stopped timeout={{syndata_stop_timeout}} port={{syndata_server_port}} delay={{syndata_stop_delay}}    

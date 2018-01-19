@@ -1,0 +1,6 @@
+{# 全局变量定义 #}
+{% set hbase_regionserver = '%s_regionserver' % hbasec %}
+{# END全局变量定义 #}
+{% for host in groups[hbase_regionserver] %}
+{{host}}
+{% endfor %}

@@ -1,0 +1,19 @@
+---
+#start syndate
+- hosts: "{{hosts}}"
+  remote_user: "{{syndata_user}}"
+  gather_facts: false
+  vars_files:
+   - "../../roles/syndata_install/defaults/main.yml"
+   - "../../roles/syndata_install/vars/main.yml"
+  tasks:
+   - name: "start syndata"
+     shell: >
+      {{pub_set_bash}} &&
+      cd {{pub_install_app_home}}/web &&
+      (nohup python syndata.py -p {{syndata_server_port}} >& /dev/null < /dev/null &)
+      executable=/bin/bash
+
+   - name: "waitting..." 
+     wait_for: >
+      state=started timeout={{syndata_start_timeout}} port={{syndata_server_port}} delay={{syndata_start_delay}}    

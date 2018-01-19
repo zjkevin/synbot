@@ -1,0 +1,58 @@
+---
+##############################WARNNING###############################
+#pub_install default vars
+#UNLESS NESSARY, the following configs should NOT be modified
+#Generally, we should overwrite it in a group var file.
+#####################################################################
+
+#################################
+#install configs for apps
+#################################
+pub_install_app_name:              "zookeeper"              #eg. "jdk"
+pub_install_app_version:           "3.4.6"                  #"1.0.1"
+pub_install_type:                  "unpack_install"         #unpack_install,copy_install
+pub_current_role:                  "zk_install"             #MUST be defined
+
+#custorm config to generate configs for "pub_install"
+zk_install_pkgname:                "{{pub_install_app_name}}-{{pub_install_app_version}}"
+
+#local package file or source path, such as jdk.targ.gz or puppy_web
+#todo change it as public default
+pub_install_app_src:               "{{pub_install_pkgs_root}}/{{pub_install_app_name}}/{{zk_install_pkgname}}.tar.gz"
+
+#the final path where the app will be installed to
+pub_install_app_home:              "{{pub_install_apps_root}}/{{zk_install_pkgname}}"
+pub_install_app_group:             hadoop                     #default user group for app
+pub_install_app_user:              hadoop                     #default user name for app
+
+#todo redefine
+pub_install_temp_path: >
+ {{pub_install_temp_root}}/{{pub_current_role}}
+
+#todo redefine.
+pub_install_apps_roots:                            #public roots for app install
+ - dest: "{{pub_install_apps_root}}"
+ - dest: "{{pub_install_temp_root}}"
+   mode: "0755"
+
+pub_install_app_paths:                           #list of pre paths
+# - dest: "{{pub_install_app_home}}"
+ - dest: "{{pub_install_temp_path}}"
+ - dest: "{{zk_home}}"
+ - dest: "{{zk_data_home}}"
+ - dest: "{{pub_install_log_root}}/zk"
+ - dest: "{{pub_install_data_root}}"
+
+#system ENV template file, in templates folder
+#pub_install_app_envfile: "../../roles/java_install/templates/syn_javaenv.sh"
+pub_install_app_envfile: "syn_zkenv.sh"
+
+pub_install_app_templates:                        #list of template files
+ - src: "zoo.cfg"
+   dest: "{{pub_install_app_home}}/conf/zoo.cfg"
+ - src: "myid"
+   dest: "{{zk_data_home}}/myid"
+
+pub_install_app_links:                             #list of pre links
+ - src: "{{zk_home}}"
+   link: "{{pub_install_apps_root}}/zk" 

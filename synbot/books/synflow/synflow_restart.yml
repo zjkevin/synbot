@@ -1,0 +1,4 @@
+---
+#restart synflow web node(s)
+- include: "synflow_stop.yml"
+- include: "synflow_start.yml"

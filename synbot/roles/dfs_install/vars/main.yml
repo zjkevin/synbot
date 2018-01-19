@@ -1,0 +1,89 @@
+---
+##############################WARNNING###############################
+#pub_install default vars
+#UNLESS NESSARY, the following configs should NOT be modified
+#Generally, we should overwrite it in a group var file.
+#####################################################################
+
+#################################
+#install configs for apps
+#################################
+pub_install_app_name:      "hadoop"          #eg. "jdk"
+pub_install_app_version:   "2.6.0"                  #"1.0.1"
+pub_install_type:          "unpack_install"         #unpack_install,copy_install
+pub_current_role:          "dfs_install"             #MUST be defined
+
+#custorm config to generate configs for "pub_install"
+dfs_install_pkgname:      "{{pub_install_app_name}}-{{pub_install_app_version}}"
+
+#local package file or source path, such as jdk.targ.gz or puppy_web
+#todo change it as public default
+pub_install_app_src:  "{{pub_install_pkgs_root}}/{{pub_install_app_name}}/{{dfs_install_pkgname}}.tar.gz"
+
+#the final path where the app will be installed to
+pub_install_app_home: "{{pub_install_apps_root}}/{{dfs_install_pkgname}}"
+
+pub_install_app_group:     hadoop                     #default user group for app
+pub_install_app_user:      hadoop                     #default user name for app
+
+dfs_group: "{{pub_install_app_group}}"
+dfs_user: "{{pub_install_app_user}}"
+
+#todo redefine
+pub_install_temp_path: "{{pub_install_temp_root}}/{{pub_current_role}}"
+
+#todo redefine.
+pub_install_apps_roots:                            #public roots for app install
+ - dest: "{{pub_install_apps_root}}"
+ - dest: "{{pub_install_temp_root}}"
+   mode: "0755"
+ - dest: "{{pub_install_data_root}}"
+   mode: "0755"
+   user: "hadoop"
+   group: "hadoop"
+
+dfs_home:             "{{pub_install_app_home}}"
+dfs_data_home:        "{{pub_install_data_root}}/hdfs"
+hadoop_home: "{{dfs_home}}"
+hdata_home: "{{dfs_data_home}}"
+hdata_tmp: "/tmp/hadoop"
+hdata_name: "{{pub_install_data_root}}/nn/d1"
+
+pub_install_app_paths:                          #list of pre paths
+ - dest: "{{pub_install_temp_path}}"
+ - dest: "{{hadoop_home}}"
+ - dest: "{{hdata_home}}"
+ - dest: "{{hdata_tmp}}"
+ - dest: "{{pub_install_log_root}}/hdfs"
+
+#system ENV template file, in templates folder
+pub_install_app_envfile: "syn_dfsenv.sh"
+
+pub_install_app_templates:                        #list of template files
+ - src: "slaves"
+   dest: "{{pub_install_app_home}}/etc/hadoop/"
+ - src: "core-site.xml"
+   dest: "{{pub_install_app_home}}/etc/hadoop/"
+ - src: "hdfs-site.xml"
+   dest: "{{pub_install_app_home}}/etc/hadoop/"
+ - src: "mapred-site.xml"
+   dest: "{{pub_install_app_home}}/etc/hadoop/"
+ - src: "yarn-site.xml"
+   dest: "{{pub_install_app_home}}/etc/hadoop/"
+ - src: "capacity-scheduler.xml"
+   dest: "{{pub_install_app_home}}/etc/hadoop/"
+ - src: "hadoop-env.sh"
+   dest: "{{pub_install_app_home}}/etc/hadoop/"
+ - src: "yarn-env.sh"
+   dest: "{{pub_install_app_home}}/etc/hadoop/"
+
+pub_install_app_links:                             #list of pre links
+ - src: "{{dfs_home}}"
+   link: "{{pub_install_apps_root}}/hadoop"
+
+app_include_vars: 
+ - "{{cntemplet_url}}/{{inventory_hostname}}/hdfs_data_mount.yml"
+ - "{{cntemplet_url}}/zks.yml"
+ - "{{cntemplet_url}}/rms.yml"
+ - "{{cntemplet_url}}/nns.yml"
+ - "{{cntemplet_url}}/jns.yml"

@@ -1,0 +1,19 @@
+puppy_web_port:               9500
+#vars refrenced to synflow web
+puppy_sfweb_host:             "{{ groups[sfwebc] | first}}"         #default 9400
+puppy_sfweb_port:             "{{sf_web_app_port}}"                #default 9400
+
+puppy_web_user: "{{pub_install_app_user}}"
+puppy_web_home: "{{pub_install_app_home}}"
+
+puppy_superv_port: "{{pub_superv_port}}"
+
+puppy_watched_hostgroups:
+ - "{{zkc}}"
+ - "{{esc}}"
+ - "{{stormc}}"
+
+#puppy_watched_hostgroups:
+# - "{{dfsc}}"
+# - "{{sfwebc}}"
+# - "{{pwebc}}"

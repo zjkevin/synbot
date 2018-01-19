@@ -1,0 +1,4 @@
+pub_renv_remote_path: "{{pub_temp_root}}/renv"
+pub_renv_remote_file: "{{pub_renv_remote_path}}/{{inventory_hostname}}.env"
+pub_renv_local_path: "{{pub_local_temp_root}}/renv"
+pub_renv_local_file: "{{pub_renv_local_path}}/{{inventory_hostname}}.env"

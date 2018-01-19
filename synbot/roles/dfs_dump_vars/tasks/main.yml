@@ -1,0 +1,13 @@
+---
+- name: "create host_cfg path"
+  file: >
+   path={{pub_vars_dump_path}}
+   state=directory mode=0755
+  when: pub_vars_dump_path != "~"
+
+- name: "dump config items"
+  template: >
+   src={{item}} 
+   dest="{{pub_vars_dump_path}}/{{dfsc}}.{{inventory_hostname}}_cfg.log"
+  with_items:
+   - host_cfg.txt

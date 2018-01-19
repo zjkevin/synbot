@@ -1,0 +1,40 @@
+pub_init_paths:
+ - task: create /root/.pip directory
+   dest: /root/.pip state=directory 
+   mode: "0700"
+
+pub_init_templates:
+ - task: copy deb sources
+   src: apt_sources.list
+   dest: /etc/apt/sources.list
+
+ - task: Setup pypi repo
+   src: pip.ini 
+   dest: /root/.pip/pip.conf
+
+ - task: locale-gen
+   src: locale-gen
+   dest: /etc/locale.gen
+
+ - task: locale
+   src: locale
+   dest: /etc/default/locale
+
+ - task: nameserver
+   src: resolv.conf
+   dest: /etc/resolv.conf
+
+ - task: dummy
+   src: dummy
+   dest: /var/syn_init_once
+
+pub_init_shells:
+ - task: config timezone
+   cmd: "dpkg-reconfigure --frontend noninteractive tzdata"
+
+ - task: locale-gen
+   cmd: "locale-gen"
+
+ - task: tmp
+   cmd: "chmod 777 /tmp"
+

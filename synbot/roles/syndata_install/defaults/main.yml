@@ -1,0 +1,17 @@
+---
+##############################WARNNING###############################
+#syndata default vars
+#UNLESS NESSARY, the following configs should NOT be modified
+#Generally, we should overwrite it in a group var file.
+#####################################################################
+
+
+
+syndata_user:              hadoop
+syndata_group:             hadoop
+
+syndata_server_port:       10001
+syndata_start_timeout:     90
+syndata_start_delay:       3
+syndata_stop_timeout:      90
+syndata_stop_delay:        3

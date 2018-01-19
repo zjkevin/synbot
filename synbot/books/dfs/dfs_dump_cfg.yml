@@ -1,0 +1,11 @@
+---
+- hosts: "{{dfsc}}_test"
+  remote_user: hadoop
+  gather_facts: false
+  vars_files:
+   - "../../roles/dfs_common/defaults/main.yml"
+   - "../../group_vars/{{dfsc}}"
+  vars:
+   pub_vars_dump_path: "~"                            #MUST define with double <">
+  roles:
+   - "../../roles/dfs_dump_vars"

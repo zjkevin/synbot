@@ -1,0 +1,67 @@
+---
+- include: "../../pub_install/tasks/main.yml"
+
+# - name: postgresql
+#   apt: pkg=postgresql state=present force=yes
+
+- name: mysql-connect-java.jar
+  copy: >
+    src={{pub_install_pkgs_root}}/mysql-connector-java-5.1.6.jar
+    dest={{hive_home}}/lib
+
+- name: jline old packages remove
+  shell: >
+    if [ -f "{{pub_install_apps_root}}/hadoop/share/hadoop/yarn/lib/jline-0.9.94.jar" ]; 
+    then
+      rm {{pub_install_apps_root}}/hadoop/share/hadoop/yarn/lib/jline-0.9.94.jar
+    fi
+    executable=/bin/bash  
+
+- name: jline-2.12 copy
+  copy: >
+    src=../templates/jline-2.12.jar
+    dest={{pub_install_apps_root}}/hadoop/share/hadoop/yarn/lib
+
+- name: install mysql-server
+  apt: pkg=mysql-server state=present force=yes
+
+- name: set root password
+  shell: >
+    if [ ! -f "{{pub_temp_root}}/mysql_root_pwd_change.flag" ]; 
+    then
+      /usr/bin/mysqladmin -u root -h 'localhost' password "synway" &&
+      touch {{pub_temp_root}}/mysql_root_pwd_change.flag create file
+    fi
+    executable=/bin/bash    
+
+- name: python-mysqldb
+  apt: pkg=python-mysqldb state=present force=yes  
+
+- name: init mysql user
+  mysql_user: >
+    login_user=root
+    login_password=synway
+    name=hive
+    password=hive 
+    priv=*.*:ALL 
+    state=present
+
+- name: create hivedb
+  mysql_db: name=hivedb login_user=root login_password=synway state=present
+
+- name: set hive privileges on hivedb
+  shell: >
+    if [ ! -f "{{pub_temp_root}}/hive_privileges_on_hivedb.flag" ];
+    then
+      mysql -uroot -psynway -e "grant all privileges on *.* to 'hive'@'%' identified by 'hive'; flush privileges;" &&
+      mysql -uroot -psynway -e "grant all privileges on *.* to 'hive'@'{{groups[hivec][0]}}' identified by 'hive'; flush privileges;" &&
+      sed -i '/bind-address/'d /etc/mysql/my.cnf &&
+      sed -i '$a \\n' /etc/mysql/my.cnf &&
+      sed -i '$a bind-address = 0.0.0.0' /etc/mysql/my.cnf &&
+      touch {{pub_temp_root}}/hive_privileges_on_hivedb.flag create file && 
+      /etc/init.d/mysql restart
+    fi
+    executable=/bin/bash
+
+
+

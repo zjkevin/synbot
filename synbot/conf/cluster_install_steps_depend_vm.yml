@@ -1,0 +1,79 @@
+---
+install_steps:
+  - step_name: vm_init
+    state: 0
+    cmd: fab vmpdd.vm_init
+    force_continue: 0
+    retry: 1
+
+  - step_name: vm_start
+    state: 0
+    cmd: fab vmpdd.vm_start
+    force_continue: 1
+    retry: 1
+
+  - step_name: sshkey
+    state: 0
+    cmd: sbc -ssh
+    force_continue: 0
+    retry: 5
+
+  - step_name: sshkey
+    state: 0
+    cmd: sbc -hv
+    force_continue: 0
+    retry: 1    
+
+  - step_name: vm_prepare 
+    state: 0
+    cmd: ansible-playbook books/pub/vm_prepare.yml
+    force_continue: 0
+    retry: 1
+
+  - step_name: hosts file upload 
+    state: 0
+    cmd: sbc -sendhosts --force
+    force_continue: 0
+    retry: 1
+
+  - step_name: cluster_prepare
+    state: 0
+    cmd: ansible-playbook books/pub/cluster_prepare.yml
+    force_continue: 0
+    retry: 1
+
+  - step_name: cluster_restart
+    state: 0
+    cmd: ansible-playbook books/pub/cluster_restart.yml
+    force_continue: 0
+    retry: 1
+
+  - step_name: syndata install
+    state: 0
+    cmd: ansible-playbook books/syndata/syndata_install.yml -e hosts=web_node
+    force_continue: 0
+    retry: 1
+
+  - step_name: ik ext prepare
+    state: 0
+    cmd: ansible-playbook books/syndata/ik_ext_prepare.yml
+    force_continue: 0
+    retry: 1
+
+  - step_name: es restart
+    state: 0
+    cmd: ansible-playbook books/es/restart.yml -e esc=es
+    force_continue: 0
+    retry: 1
+
+  - step_name: syndata prepare
+    state: 0
+    cmd: ansible-playbook books/syndata/syndata_prepare.yml -e hosts=web_node
+    force_continue: 0
+    retry: 1
+
+  - step_name: azkaban install
+    state: 0
+    cmd: ansible-playbook books/azkaban/azkaban_install.yml -e azkaban=web_node
+    force_continue: 0
+    retry: 1    

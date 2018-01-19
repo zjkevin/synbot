@@ -1,0 +1,8 @@
+---
+- hosts: "{{hivec}}"
+  remote_user: root
+  gather_facts: false
+  roles:
+   - "../../roles/hive_install"
+  vars:
+   hivec: "{{hivec}}"

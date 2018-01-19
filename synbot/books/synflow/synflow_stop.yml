@@ -1,0 +1,19 @@
+---
+#"stop synflow web server"
+- hosts: "{{sfwebc | default(synflow_web)}}"
+  remote_user: "{{sf_web_user}}"
+  gather_facts: false
+  vars_files:
+   - "../../roles/synflow_web/defaults/main.yml"
+   - "../../roles/synflow_web/vars/main.yml"
+  tasks:
+   - name: "stop synflow web server"
+     shell: >
+      {{pub_set_bash}} &&
+      ps aux | grep -E \(python\)\\s+\(synflow.py\) | awk '{system("kill -TERM "$2)}'
+      executable=/bin/bash
+
+   - name: "waiting for synflow web to stop..." 
+     wait_for: >
+      state=stopped timeout=90 
+      port={{sf_web_app_port}} 

@@ -1,0 +1,28 @@
+---
+#start hive
+- hosts: "{{hivec}}"
+  remote_user: hadoop
+  gather_facts: false
+  vars_files:
+   - "../../roles/hive_install/defaults/main.yml"
+   - "../../roles/hive_install/vars/main.yml"
+  tasks:
+   - name: "start hive service"
+     shell: >
+      {{pub_set_bash}} &&
+      (nohup hive --service hiveserver > {{pub_install_log_root}}/hive/hive.log 2>&1 &) 
+      executable=/bin/bash
+
+   - name: "waitting..." 
+     wait_for: >
+      state=started timeout={{hive_start_timeout}} port={{hive_server_port}} delay={{hive_start_delay}}  
+      
+   - name: "start webhcat service"
+     shell: >
+      {{pub_set_bash}} &&
+      {{pub_install_app_home}}/hcatalog/sbin/webhcat_server.sh start
+      executable=/bin/bash
+
+   - name: "waitting..." 
+     wait_for: >
+      state=started timeout={{webhcat_start_timeout}} port={{webhcat_server_port}} delay={{webhcat_start_delay}} 

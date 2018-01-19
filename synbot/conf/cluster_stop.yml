@@ -1,0 +1,7 @@
+---
+install_steps:
+  - step_name: cluster stop
+    state: 0
+    cmd: ansible-playbook books/pub/cluster_stop.yml
+    force_continue: 0
+    retry: 1

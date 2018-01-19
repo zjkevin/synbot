@@ -1,0 +1,12 @@
+---
+- name: "chown" 
+  hosts: "{{hosts}}"
+  remote_user: root
+  gather_facts: false
+  tasks:
+   - name: "chown /var/syndata"
+     shell: >
+      chown -R hadoop:hadoop /var/syndata
+      executable=/bin/bash
+  vars:
+   hosts: installvm

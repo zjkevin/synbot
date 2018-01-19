@@ -1,0 +1,16 @@
+---
+#frtch hive conf to cn
+- hosts: "{{hivec}}"
+  remote_user: root
+  gather_facts: false
+  vars_files:
+   - "../../roles/hive_install/defaults/main.yml"
+   - "../../roles/hive_install/vars/main.yml"
+  tasks:
+   - name: "fetch hive-site.xml"
+     fetch: >
+       src={{pub_install_app_home}}/conf/hive-site.xml
+       dest={{cntemplet_url}}/hive-site.xml
+       flat=yes
+      
+

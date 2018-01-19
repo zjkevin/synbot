@@ -1,0 +1,64 @@
+---
+##############################WARNNING###############################
+#pub_install default vars
+#UNLESS NESSARY, the following configs should NOT be modified
+#Generally, we should overwrite it in a group var file.
+#####################################################################
+
+#################################
+#install configs for apps
+#################################
+pub_install_app_name:      "jdk"                    #eg. "jdk"
+pub_install_app_version:   "1.7.0_67"               #"1.0.1"
+pub_install_type:          "unpack_install"         #unpack_install,copy_install
+
+java_install_pkgname:      "{{pub_install_app_name}}-{{pub_install_app_version}}"
+#local package file or source path, such as jdk.targ.gz or puppy_web
+#todo change it as public default
+pub_install_app_src:  "{{pub_install_pkgs_root}}/{{pub_install_app_name}}/{{java_install_pkgname}}.tar.gz"
+
+#the final path where the app will be installed to
+pub_install_app_home: "{{pub_install_apps_root}}/{{java_install_pkgname}}"
+
+pub_install_app_group:     root                      #default user group for app
+pub_install_app_user:      root                      #default user name for app
+
+#todo redefine
+pub_install_temp_path: >
+ {{pub_install_temp_root}}/{{pub_install_app_name}}
+
+#todo redefine.
+pub_install_apps_roots:                            #public roots for app install
+ - dest: "{{pub_install_apps_root}}"
+ - dest: "{{pub_install_temp_root}}"
+   mode: "0777"
+ - dest: "{{pub_install_data_root}}"
+
+pub_install_app_paths:                           #list of pre paths
+ - dest: "{{pub_install_app_home}}"
+   user: "{{pub_install_app_user}}"
+   group: "{{pub_install_app_group}}"
+
+#todo use this file?
+#pub_install_app_files:          -                #list of files
+#pub_install_pre_files:     -                     #sample
+# - dest:"/var/syndata/program/hadoop"
+#   mode: 0700                                    #file mode 0700 used , default 0755
+# - src: "/program/hadoop/etc/hadoop"
+#   link: "/hconfig"
+
+#system ENV template file, in templates folder
+#pub_install_app_envfile: "../../roles/java_install/templates/syn_javaenv.sh"
+pub_install_app_envfile: "../../roles/{{role_name}}/templates/syn_javaenv.sh"
+
+pub_install_app_templates:                        #list of template files
+ - src: "../../roles/java_install/templates/syn_javaenv.sh"
+   dest: "{{pub_install_app_home}}/bin/testabc.sh"
+
+pub_install_app_links:     ~                      #list of pre links w
+#pub_install_app_links:     ~                     #list of pre links w
+# - src: "usr/local/jdk"
+#   link: "/jdk"
+# - src: "/program/hadoop/etc/hadoop"
+#   link: "/hconfig"
+

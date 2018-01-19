@@ -1,0 +1,7 @@
+---
+- name: "the necessary software on the HV" 
+  hosts: "{{hosts}}"
+  remote_user: root
+  gather_facts: false
+  roles:
+   - "../../roles/hv_soft"

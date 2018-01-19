@@ -1,0 +1,55 @@
+# This is a configuration file for initailizing logging module and is build based on python 2.7 manuals.
+# Format in this file is according to ConfigParser functionality as the python 2.7 manuals said.
+# To config this file, you should be likely to read logging.config module docs in python manuals.
+version: 1
+
+formatters:
+    simpleFormatter:
+        format: '%(asctime)s - %(name)s - [%(levelname)s]: %(message)s - [%(filename)s:%(lineno)s]'
+
+handlers:
+    console:
+        class: logging.StreamHandler
+        level: INFO
+        formatter: simpleFormatter
+        stream: ext://sys.stdout
+    file:
+        class: logging.FileHandler
+        level: DEBUG 
+        formatter: simpleFormatter
+        filename: logs/app.log
+        mode: a #append
+    rotatingFile:
+        class: logging.handlers.RotatingFileHandler
+        level: DEBUG
+        formatter: simpleFormatter
+        filename: logs/app.log
+        mode: a
+        maxBytes: 50 * 1024 * 1024
+        backupCount: 3
+        encoding: UTF-8
+
+loggers:
+    console:
+        level: INFO
+        handlers: [console]
+        formatter: simpleFormatter
+        qualname: console
+        propagate: 0
+    file:
+        level: INFO
+        handlers: [file]
+        formatter: simpleFormatter
+        qualname: file
+        propagate: 0
+    rotatingFile:
+        level: DEBUG 
+        handlers: [rotatingFile]
+        formatter: simpleFormatter
+        qualname: rotatingFile
+        propagate: 0
+
+root:
+    level: DEBUG
+    handlers: [console, rotatingFile]
+    formatter: simpleFormatter

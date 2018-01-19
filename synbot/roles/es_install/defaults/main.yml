@@ -1,0 +1,62 @@
+---
+##############################WARNNING###############################
+#es default vars
+#UNLESS NESSARY, the following configs should NOT be modified
+#Generally, we should overwrite it in a group var file.
+#####################################################################
+
+es_user:  "{{pub_install_app_user}}"
+es_group: "{{pub_install_app_group}}"
+es_heap_size: "{{es_heap_size}}"
+
+#################################
+#es runtime configs
+#################################
+#node.name
+es_node_name:                       "{{inventory_hostname_short}}"
+
+#node.master default(true)
+es_node_allow_master:                "true"                    #MUST be 'true' or 'false' as string
+
+#node.data default(true)
+es_node_allow_data:                  "true"                    #MUST be 'true' or 'false' as string
+
+#node.max_local_storage_nodes
+es_node_max_local_storage_nodes:      1
+
+#index.number_of_shards,default 5
+es_index_number_of_shards:            5
+
+#index.number_of_replicas default(3)
+es_index_number_of_replicas :          3
+
+#path.work
+es_work_path: "{{pub_install_data_root}}/es/d1/work_tmp"
+
+#path.logs
+es_logs_path:  "{{pub_install_log_root}}/es"
+
+#path.plugins
+es_plugins_path: "{{es_home}}/plugins"
+
+#bootstrap.mlockall , default(true)
+es_bootstrap_mlockall:  "true"                       #MUST be 'true' or 'false' as string
+
+#transport.tcp.port, default(9300)
+es_transport_tcp_port:  9300
+
+#transport.tcp.compress, default(true)
+es_transport_tcp_compress: "true"                    #MUST be 'true' or 'false' as string
+
+#http.port, default(9200)
+es_http_port:               9200
+
+#http.max_content_length , default('100mb')
+es_http_max_content_length:  1024mb
+
+#es cluster admin configs , custom only
+esc_start_delay:                3
+esc_start_timeout:              90
+esc_stop_delay:                 3
+esc_stop_timeout:               90
+

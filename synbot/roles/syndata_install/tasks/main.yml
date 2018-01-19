@@ -1,0 +1,108 @@
+---
+- include: "../../pub_install/tasks/main.yml"
+
+# - name: "execute synlift prepare script"
+#   shell: >
+#     {{pub_install_app_home}}/bin/synlift/prepare.py
+
+- name: "install zip"
+  apt: pkg=zip state=present force=yes
+
+- name: "unzip syndata zip"
+  shell: >
+    unzip -o {{item.src}}.zip -d {{item.dest}}
+  with_items: syndata_zip_list
+
+- name: "install happybase"
+  shell: >
+    {{pub_set_bash}} &&
+    pip install happybase==0.9 --no-index --find-links={{pip_source_address}}
+    executable=/bin/bash
+
+- name: "install python-dateutil"
+  shell: >
+    {{pub_set_bash}} &&
+    pip install python-dateutil --no-index --find-links={{pip_source_address}}
+    executable=/bin/bash
+
+- name: "install PyYAML"
+  shell: >
+    {{pub_set_bash}} &&
+    pip install PyYAML --no-index --find-links={{pip_source_address}}
+    executable=/bin/bash
+
+- name: "install kazoo"
+  shell: >
+    {{pub_set_bash}} &&
+    pip install kazoo --no-index --find-links={{pip_source_address}}
+    executable=/bin/bash
+
+- name: "install requests"
+  shell: >
+    {{pub_set_bash}} &&
+    pip install requests --no-index --find-links={{pip_source_address}}
+    executable=/bin/bash
+
+- name: "install thrift"
+  shell: >
+    {{pub_set_bash}} &&
+    pip install thrift --no-index --find-links={{pip_source_address}}
+    executable=/bin/bash
+
+- name: "install bottle"
+  shell: >
+    {{pub_set_bash}} &&
+    pip install 'bottle>=0.12.7' --no-index --find-links={{pip_source_address}}
+    executable=/bin/bash
+
+- name: "install six-1.9.0"
+  shell: >
+    {{pub_set_bash}} &&
+    pip install six==1.9.0 --no-index --find-links={{pip_source_address}}
+    executable=/bin/bash
+
+- name: "install elasticsearch-py-1.6.0"
+  shell: >
+    {{pub_set_bash}} &&
+    pip install elasticsearch-py==1.6.0 --no-index --find-links={{pip_source_address}}
+    executable=/bin/bash
+
+- name: "install elasticsearch-dsl-py-0.0.4"
+  shell: >
+    {{pub_set_bash}} &&
+    pip install elasticsearch-dsl-py==0.0.4 --no-index --find-links={{pip_source_address}}
+    executable=/bin/bash
+
+- name: "install syndata zip"
+  shell: >
+   cd {{item.src}} &&
+   pip install .
+  with_items: syndata_zip_list
+
+- name: "install bottle"
+  shell: >
+    {{pub_set_bash}} &&
+    pip install 'bottle>=0.12.7' --no-index --find-links={{pip_source_address}}
+    executable=/bin/bash    
+
+- name: "build-essential apt install"
+  apt: pkg=build-essential state=present force=yes
+
+- name: "python-dev apt install"
+  apt: pkg=python-dev state=present force=yes 
+
+- name: "libsasl2-dev"
+  apt: pkg=libsasl2-dev state=present force=yes    
+
+- name: "install python pyhs2 ThriftServer drive to hive and spark"
+  shell: >
+    {{pub_set_bash}} &&
+    pip install sasl --no-index --find-links={{pip_source_address}} &&
+    pip install pyhs2 --no-index --find-links={{pip_source_address}}
+    executable=/bin/bash
+
+- name: "install paste"
+  shell: >
+    {{pub_set_bash}} &&
+    pip install paste --no-index --find-links={{pip_source_address}}
+    executable=/bin/bash

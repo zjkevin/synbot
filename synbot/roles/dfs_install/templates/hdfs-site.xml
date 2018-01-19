@@ -1,0 +1,127 @@
+<?xml version="1.0"?>
+<!-- edited with XMLSpy v2008 sp1 (http://www.altova.com) by 周华桢 (Synway) -->
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<configuration>
+<![CDATA[
+{# 全局变量定义 #}
+{% set dfs_group = dfsc %}
+{% set nn_group = '%s_nn' % dfsc %}
+{% set nb_group = '%s_nb' % dfsc %}
+
+{% if hdfs_data_mount_dn == None %}
+	{% set mount_temp = [] %}
+{% else %}
+	{% set mount_temp = hdfs_data_mount_dn %}
+{% endif %}
+
+{% if nns == None %}
+	{% set dfs_nameservices = [] %}
+{% else %}
+	{% set dfs_nameservices = nns %}
+{% endif %}
+
+{% if jns == None %}
+	{% set journal_servers = [] %}
+{% else %}
+	{% set journal_servers = jns %}
+{% endif %}
+
+{# END全局变量定义 #}
+]]>
+	<property> 
+        <name>dfs.ha.automatic-failover.enabled</name> 
+        <value>true</value> 
+    </property>
+	<property>
+		<name>dfs.namenode.logging.level</name>
+		<value>{{dfs_namenode_logging_level}}</value>
+	</property>	
+	<property>
+		<name>dfs.nameservices</name>
+		<value>mycluster</value>
+	</property>
+	<property>
+	    <name>dfs.ha.namenodes.mycluster</name>
+	    <value>{{dfs_nameservices|join(",")}}</value>
+	</property>	
+	<property>
+		<name>dfs.namenode.rpc-address.mycluster.ns1</name>
+		<value>{{groups[nn_group][0]}}:9000</value>
+	</property>
+	<property>
+		<name>dfs.namenode.rpc-address.mycluster.ns2</name>
+		<value>{{groups[nb_group][0]}}:9000</value>
+	</property>	
+	<property>
+		<name>dfs.namenode.http-address.mycluster.ns1</name>
+		<value>{{groups[nn_group][0]}}:50070</value>
+	</property>
+	<property>
+		<name>dfs.namenode.http-address.mycluster.ns2</name>
+		<value>{{groups[nb_group][0]}}:50070</value>
+	</property>	
+	<property>
+		<name>dfs.namenode.servicerpc-address.mycluster.ns1</name>
+		<value>{{groups[nn_group][0]}}:9005</value>
+	</property>
+	<property>
+		<name>dfs.namenode.servicerpc-address.mycluster.ns2</name>
+		<value>{{groups[nb_group][0]}}:9005</value>
+	</property>
+	<property>
+		<name>dfs.namenode.rpc-bind-host</name>
+		<value>0.0.0.0</value>
+	</property>
+	<property>
+		<name>dfs.namenode.servicerpc-bind-host</name>
+		<value>0.0.0.0</value>
+	</property>
+	<property>
+		<name>dfs.namenode.name.dir</name>
+		<value>{{hdata_name}}</value>
+	</property>
+	<property>
+		<name>dfs.datanode.data.dir</name>
+		<value>{{mount_temp|join(",")}}</value>
+	</property>   
+	<property>
+	    <name>dfs.namenode.edits.dir</name>
+	    <value>file:///var/syndata/journal/node/local/data/current</value>
+	</property>
+	<property>
+	    <name>dfs.namenode.shared.edits.dir</name>
+	    <value>qjournal://{{journal_servers|join(";")}}/mycluster</value>
+	</property>
+	<property>
+	    <name>dfs.journalnode.edits.dir</name>
+	    <value>/var/syndata/jn/d1</value>
+	</property>	
+	<property>
+	    <name>dfs.client.failover.proxy.provider.mycluster</name>
+	    <value>org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider</value>
+	</property>
+	<property>
+	    <name>dfs.ha.fencing.methods</name>
+	    <value>sshfence</value>
+	</property>
+	<property>
+	    <name>dfs.ha.fencing.ssh.private-key-files</name>
+	    <value>/home/hadoop/.ssh/id_rsa</value>
+	</property>
+   	<property>
+        <name>dfs.replication</name>
+        <value>3</value>
+    </property>
+    <property>
+        <name>dfs.namenode.handler.count</name>
+        <value>50</value>
+    </property>
+    <property>
+        <name>dfs.namenode.support.allow.format</name>
+        <value>true</value>
+    </property>
+    <property>
+            <name>dfs.permissions.superusergroup</name>
+            <value>{{dfs_permissions_superusergroup}}</value>
+    </property>
+</configuration>

@@ -1,0 +1,12 @@
+---
+- hosts: "{{esc}}"
+  remote_user: "{{es_user}}"
+  gather_facts: false
+  vars_files:
+   - "../../roles/es_install/defaults/main.yml"
+   - "../../roles/es_install/vars/main.yml"
+  tasks:
+   - name: "start es nodes"
+     shell: >
+      {{pub_set_bash}} && (nohup elasticsearch -d > {{pub_install_log_root}}/es/es.log 2>&1 &)
+      executable=/bin/bash

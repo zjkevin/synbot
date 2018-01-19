@@ -1,0 +1,84 @@
+---
+
+superv_http_port:   "{{pub_superv_port}}"
+
+superv_apps_commands:
+#dfs commands
+ - name:        dfs_namenode
+   command:     "{{renv.HADOOP_HOME | d('error_HADOOP_HOME')}}/sbin/hadoop-daemon.sh --script hdfs start namenode"
+   chdir:       "{{renv.HADOOP_HOME | d('error_HADOOP_HOME')}}"
+#   autostart:   "true"
+   hostgroup:   "{{dfsc}}_nn"
+
+ - name:        dfs_datanode
+   command:     "{{renv.HADOOP_HOME | d('error_HADOOP_HOME')}}/sbin/hadoop-daemon.sh --script hdfs start datanode"
+   chdir:       "{{renv.HADOOP_HOME | d('error_HADOOP_HOME')}}"
+   autostart:   "true"
+   hostgroup:   "{{dfsc}}_dn"
+
+ - name:        dfs_resouceman
+   command:     "{{renv.HADOOP_HOME | d('error_HADOOP_HOME')}}/sbin/yarn-daemon.sh start resourcemanager"
+   chdir:       "{{renv.HADOOP_HOME | d('error_HADOOP_HOME')}}/"
+#   autostart:   "true"
+   hostgroup:   "{{dfsc}}_rm"
+
+ - name:        dfs_nodeman
+   command:     "{{renv.HADOOP_HOME | d('error_HADOOP_HOME')}}/sbin/yarn-daemon.sh start nodemanager"
+   chdir:       "{{renv.HADOOP_HOME | d('error_HADOOP_HOME')}}/"
+#   autostart:   "true"
+   hostgroup:   "{{dfsc}}_nm"
+
+ - name:        dfs_historyserver
+   command:     "{{renv.HADOOP_HOME | d('error_HADOOP_HOME')}}/sbin/mr-jobhistory-daemon.sh start historyserver"
+   chdir:       "{{renv.HADOOP_HOME | d('error_HADOOP_HOME')}}/"
+#   autostart:   "true"
+   hostgroup:   "{{dfsc}}_hm"
+
+#zk commands
+ - name:        zk
+   command:     "{{renv.ZK_HOME | d('error_ZK_HOME')}}/bin/zkServer.sh start"
+   chdir:       "{{renv.ZK_HOME | d('error_ZK_HOME')}}/"
+#   autostart:   "true"
+   hostgroup:   "{{zkc}}"
+
+#es commands
+ - name:        es
+   command:     "{{renv.ES_HOME | d('error_ES_HOME')}}/bin/elasticsearch -d"
+   chdir:       "{{renv.ES_HOME | d('error_ES_HOME')}}/"
+#   autostart:   "true"
+   hostgroup:   "{{esc}}"
+
+#strom commands
+ - name:        storm_master
+   command:     "python {{renv.STORM_HOME | d('error_STORM_HOME')}}/bin/storm nimbus"
+   chdir:       "{{renv.STORM_HOME | d('error_STORM_HOME')}}/"
+#   autostart:   "true"
+   hostgroup:   "{{stormc}}_master"
+
+ - name:        storm_slave
+   command:     "python {{renv.STORM_HOME | d('error_STORM_HOME')}}/bin/storm supervisor"
+   chdir:       "{{renv.STORM_HOME | d('error_STORM_HOME')}}/"
+#   autostart:   "true"
+   hostgroup:   "{{stormc}}_slave"
+
+ - name:        storm_ui
+   command:     "python {{renv.STORM_HOME | d('error_STORM_HOME')}}/bin/storm ui"
+   chdir:       "{{renv.STORM_HOME | d('error_STORM_HOME')}}/"
+#   autostart:   "true"
+   hostgroup:   "{{stormc}}_master"
+
+#synflow commands
+ - name:        synflow_web
+   command:     "python synflow.py"
+   chdir:       "{{renv.SFWEB_HOME | d('error_SFWEB_HOME')}}"
+#   autostart:   "true"
+   stdout_logfile: "%(here)s/synflow.log"
+   hostgroup:   "{{sfwebc}}"
+
+#puppy commands
+ - name:        puppy_web
+   command:     "python pweb.py"
+   chdir:       "{{renv.PWEB_HOME | d('error_PWEB_HOME')}}"
+#   autostart:   "true"
+   stdout_logfile: "%(here)s/pweb.log"
+   hostgroup:   "{{pwebc}}"

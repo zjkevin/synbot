@@ -1,0 +1,24 @@
+---
+default_domain: dev.s
+nameserver: 192.168.60.171
+ipaddress_block:
+  - ipaddress_prefix: 192.168.110
+    domain: dev.s
+    netmask: 255.255.255.0
+    network: 192.168.110.0
+    gateway: 192.168.110.254
+    nameserver: 192.168.60.171
+    vm_ip: 1~180
+    hv_ip: 181~253
+    hv_count: [1,18]
+    vm_count: 10
+  - ipaddress_prefix: 192.168.50
+    domain: dev.s
+    netmask: 255.255.255.0
+    network: 192.168.50.0
+    gateway: 192.168.50.254
+    nameserver: 192.168.60.171
+    vm_ip: 101~229
+    hv_ip: 38~49
+    hv_count: [98,100]
+    vm_count: 5

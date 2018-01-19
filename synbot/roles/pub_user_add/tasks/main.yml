@@ -1,0 +1,11 @@
+---
+- name: add user
+  user: name="{{user}}" groups=sudo state=present shell=/bin/bash
+
+- name: prepare ssh key to the remote host
+  authorized_key: user="{{user}}"
+                  key="{{lookup('file','~/.ssh/id_rsa.pub')}}"
+                  unique=yes
+
+- name: change password
+  shell: (echo "{{pwd}}"; sleep 1; echo "{{pwd}}")|passwd "{{user}}"

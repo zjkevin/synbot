@@ -1,0 +1,7 @@
+---
+
+#hv: hyperv
+#vm: targetvm
+mem: 14
+cpu: 14
+flag_restart : true

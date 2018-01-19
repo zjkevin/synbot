@@ -1,0 +1,20 @@
+---
+#"start synflow web server"
+- hosts: "{{sfwebc | default('synflow_web')}}"
+  remote_user: "{{sf_web_user}}"
+  gather_facts: false
+  vars_files:
+   - "../../roles/synflow_web/defaults/main.yml"
+   - "../../roles/synflow_web/vars/main.yml"
+  tasks:
+   - name: "start synflow web server"
+     shell: >
+      {{pub_set_bash}} && cd $SFWEB_HOME &&
+      (nohup python synflow.py > synflow.log 2>&1 &)
+      chdir={{sf_web_home}}
+      executable=/bin/bash
+
+   - name: "waiting for synflow web to start..." 
+     wait_for: >
+      state=started timeout=90 
+      port={{sf_web_app_port}} 

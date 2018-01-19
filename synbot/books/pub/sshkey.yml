@@ -1,0 +1,7 @@
+---
+- name: "copy ssh pub key to host for root" 
+  hosts: "{{hosts}}"
+  remote_user: root
+  gather_facts: false
+  roles:
+   - "../../roles/pub_sshkey"

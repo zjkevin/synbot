@@ -1,0 +1,30 @@
+---
+- name: "mkdir apps and apps logs"
+  file: >
+   dest={{item.dest}}
+   mode={{item.mode | default('0755')}}
+   state=directory
+   owner={{hadoop_user}}  
+   group={{hadoop_group}}
+  with_items: pub_install_apps_roots
+  tags:
+   - "{{pub_install_app_tag | default(pub_install_app_name)}}"
+   - deploy
+   - install
+   - unpack
+   - public
+   - prepare
+
+- name: "install program which SHW depend on"
+  shell: >
+    happybase
+
+- name: "copy habse client from habse_master and create ln for habse client" 
+
+- name: "copy shlod_web.tar.gz and xzvf it to apps"
+
+- name: "prepare SHW"
+
+- name: "start SHW"
+
+- name: "copy habse client from habse_master and create ln for habse client" 

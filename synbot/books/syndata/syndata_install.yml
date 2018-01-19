@@ -1,0 +1,10 @@
+---
+- hosts: "{{hosts}}"
+  remote_user: root
+  gather_facts: false
+  roles:
+   - "../../roles/syndata_install"
+  vars:
+   es: es
+   zookeeper: zookeeper
+

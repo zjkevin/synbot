@@ -1,0 +1,66 @@
+---
+helps:
+  - kind: synbot status
+    cmds: 
+     - cmd: -cn
+       content: show CN info
+     - cmd: -hvmode
+       content: cluster on hv
+     - cmd: -vmmode
+       content: cluster on vm
+  - kind: network setting
+    cmds: 
+     - cmd: -ssh
+       content: 'dispense ssh key to the HV default dispense to the [mother_land]  and [installvm] in hosts, or "sbc -ssh poc1,poc[4~8]" for poc1,poc4,poc5,poc6,poc7,poc8'
+     - cmd: -en
+       content: 'edit network config file'
+     - cmd: -createhosts
+       content: 'create hosts file depend on config file conf/network_conf.yml'
+     - cmd: -sendhosts
+       content: 'send hosts file depend on file roles/hosts/templates/hosts, send hosts file default the [mother_land]  and [installvm] in hosts file or "sbc -sendhosts poc1,poc[4~8]" for poc1,poc4,poc5,poc6,poc7,poc8'
+  - kind: hv init
+    cmds: 
+     - cmd: -hv
+       content: 'will update hv /etc/hosts from ./cluster_config/hosts,install software for hv from ./conf/hv_soft.yml'
+  - kind: cluster config
+    cmds: 
+     - cmd: -d
+       content: define a cluster config file from templet
+     - cmd: -p
+       content: the path where to save the config file default in synbot root dir
+     - cmd: -e
+       content: edit cluster config file
+     - cmd: -parse
+       content: parse cluster_config.yml
+  - kind: install cluster
+    cmds:
+     - cmd: -i 
+       content: 'install cluster depend on the config file'
+     - cmd: -i-all
+       content: 'install cluster depend on the config file with syndata'
+     - cmd: -restart
+       content: 'restart cluster depend on the config file'
+     - cmd: -stop 
+       content: 'stop cluster depend on the config file'
+     - cmd: -start
+       content: 'start cluster depend on the config file'
+     - cmd: -rebuild
+       content: 'rebuild cluster depend on the config file'
+     - cmd: -rebuild-all
+       content: 'rebuild cluster depend on the config file with syndata'
+  - kind: tools
+    cmds:
+     - cmd: -ping 
+       content: 'ping hosts default the [mother_land] and [installvm] in hosts file or "sbc -ping poc1,poc[4~8]" for poc1,poc4,poc5,poc6,poc7,poc8'
+     - cmd: -socket 
+       content: 'check socket status for hosts default the [mother_land] and [installvm] in hosts file or "sbc -socket poc1,poc[4~8]" for  poc1,poc4,poc5,poc6,poc7,poc8'
+     - cmd: -diskformat
+       content: 'format disk'
+     - cmd: -diskmount
+       content: 'mount disk'
+  - kind: how to install cluster base on hv
+    flows:
+     - title: install cluster base on hv
+       content: sbc -cn|sbc -hvmode|sbc -en|sbc -createhosts|sbc -d|sbc -e|sbc -parse|sbc -i
+     - title: format disk on hv
+       content: sbc -cn|sbc -hvmode|sbc -en|sbc -createhosts|sbc -d|sbc -e|sbc -diskformat 

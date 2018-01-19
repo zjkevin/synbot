@@ -1,0 +1,26 @@
+---
+- hosts: "{{hosts}}"
+  remote_user: "{{syndata_user}}"
+  gather_facts: false
+  vars_files:
+   - "../../roles/syndata_install/defaults/main.yml"
+   - "../../roles/syndata_install/vars/main.yml"  
+  tasks:
+   - name: "execute synhold prepare script"
+     shell: >
+        {{pub_set_bash}} &&
+        chmod 0755 {{pub_install_app_home}} &&
+        chmod +x {{pub_install_app_home}}/bin/synhold/prepare.py &&
+        cd {{pub_install_app_home}}/bin/synhold &&
+        python prepare.py -e http://{{groups[es][0]}}:9200
+        executable=/bin/bash
+   - name: "execute synlift prepare script"
+     shell: >
+        {{pub_set_bash}} &&
+        chmod 0755 {{pub_install_app_home}} &&
+        chmod +x {{pub_install_app_home}}/bin/synlift/prepare.py &&
+        cd {{pub_install_app_home}}/bin/synlift &&
+        python prepare.py
+        executable=/bin/bash
+  vars:
+    es: es

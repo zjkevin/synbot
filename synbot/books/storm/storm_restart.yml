@@ -1,0 +1,4 @@
+---
+#restart storm nodes
+- include: "storm_stop.yml"
+- include: "storm_start.yml"

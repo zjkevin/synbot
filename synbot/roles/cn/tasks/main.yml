@@ -1,0 +1,13 @@
+---
+- name: set off CN HostKey checking
+  shell: >
+        if [ -f "/root/.ssh/config" ]; then
+        echo '' >> /root/.ssh/config;
+        cp /root/.ssh/config /root/.ssh/config.bk;
+        else
+        echo '' > /root/.ssh/config;
+        fi
+        sed -i '/StrictHostKeyChecking/d' /root/.ssh/config;
+        sed -i '/UserKnownHostsFile/d' /root/.ssh/config; 
+        sed -i '1i StrictHostKeyChecking no' /root/.ssh/config;
+        sed -i '2i UserKnownHostsFile /dev/null' /root/.ssh/config;

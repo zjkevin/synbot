@@ -1,0 +1,10 @@
+{# 全局变量定义 #}
+{% set dfs_group = dfsc %}
+{% set nn_group = '%s_nn' % dfsc %}
+{% set dn_group = '%s_dn' % dfsc %}
+{% set rm_group = '%s_rm' % dfsc %}
+{% set nm_group = '%s_nm' % dfsc %}
+{# END全局变量定义 #}
+{% for dn in groups[dn_group] %}
+{{dn}}
+{% endfor %}

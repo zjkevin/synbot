@@ -1,0 +1,59 @@
+---
+- include: "lvextend.yml"
+  vars:
+   hosts: installvm
+
+- include: "useradd.yml"
+  vars:
+   hosts: installvm
+   user: hadoop
+   pwd: hadoop
+
+- include: "pup_init.yml"
+  vars:
+    hosts: installvm
+
+- include: "ntpsvr.yml"
+  vars:
+   ntps: ntp_servers
+  tags: 
+    - ntp
+
+- include: "ntpclient.yml"
+  vars:
+   ntps: ntp_servers
+   ntpc: ntp_clients
+  tags: 
+    - ntpclient
+
+- include: "../java/java_install.yml"
+  vars:
+   hosts: installvm
+
+- name: "chown" 
+  hosts: "{{hosts}}"
+  remote_user: root
+  gather_facts: false
+  tasks:
+   - name: "chown /var/syndata"
+     shell: >
+      chown -R hadoop:hadoop /var/syndata
+      executable=/bin/bash
+  vars:
+   hosts: installvm
+
+- name: "chmod /tmp" 
+  hosts: "{{hosts}}"
+  remote_user: root
+  gather_facts: false
+  tasks:
+   - name: "chmod 777 /tmp"
+     shell: >
+      chmod 777 /tmp
+      executable=/bin/bash
+  vars:
+   hosts: installvm
+
+- include: "ulimited.yml"
+  vars:
+   hosts: installvm

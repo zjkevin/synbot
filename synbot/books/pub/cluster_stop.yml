@@ -1,0 +1,29 @@
+---
+- include: "../storm/storm_stop.yml"
+  vars:
+   stormc: storm
+
+- include: "../es/es_stop.yml"
+  vars:
+   esc: es
+   esc_name: es1   
+
+- include: "../hbase/hbase_stop.yml"
+  vars:
+   hbasec: hbase
+
+- include: "../spark/spark_stop.yml"
+  vars:
+   spark: sparkc 
+
+#- include: "../hive/hive_stop.yml"
+#  vars:
+#   hivec: hivec
+
+- include: "../dfs/dfs_stop.yml"
+  vars:
+   dfsc: hdfs
+
+- include: "../zk/zk_stop.yml"
+  vars:
+   zkc: zookeeper

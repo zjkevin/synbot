@@ -1,0 +1,7 @@
+---
+- name: "init hosts" 
+  hosts: "{{hosts}}"
+  remote_user: root
+  gather_facts: false
+  roles:
+   - "../../roles/pub_init"

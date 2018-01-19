@@ -1,0 +1,35 @@
+---
+- name: install NTPd service
+  apt: name=ntp state=present force=yes
+  when: inventory_hostname not in groups[ntps]
+  tags:
+   - pubint
+   - ntp
+   - ntpclient
+
+- name: stop NTPd service
+  service: name=ntp state=stopped
+  when: inventory_hostname not in groups[ntps]
+  tags:
+   - pubint
+   - ntp
+   - ntpclient
+   - pubconfig
+
+- name: config NTPd service as CLIENT
+  template: src=ntp.conf dest=/etc/ntp.conf
+  when: inventory_hostname not in groups[ntps]
+  tags:
+   - pubint
+   - ntp
+   - ntpclient
+   - pubconfig
+
+- name: start NTPd service as CLIENT
+  service: name=ntp state=started
+  when: inventory_hostname not in groups[ntps]
+  tags:
+   - pubint
+   - ntp
+   - ntpclient
+   - pubconfig

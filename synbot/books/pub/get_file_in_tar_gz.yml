@@ -1,0 +1,7 @@
+---
+- name: "get file in tar.gz" 
+  hosts: "{{hosts}}"
+  remote_user: root
+  gather_facts: false
+  roles:
+   - "../../roles/pub_get_file_in_tar_gz"

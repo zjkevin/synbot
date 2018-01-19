@@ -1,0 +1,6 @@
+pocx:
+- {disk: /dev/sdc, mount: null, name: nn, size: 100G}
+- {disk: /dev/sdc, mount: null, name: es, size: 100G}
+- {disk: /dev/sdc, mount: null, name: zk, size: 100G}
+- {disk: /dev/sdc, mount: null, name: log, size: 10G}
+- {disk: /dev/sdc, mount: null, name: tmp, size: 10G}

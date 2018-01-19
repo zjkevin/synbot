@@ -1,0 +1,142 @@
+---
+- include: "../zk/zk_start.yml"
+#start name nodes
+- hosts: "{{dfsc}}"
+  remote_user: hadoop
+  gather_facts: false
+  vars_files:
+   - "../../roles/dfs_install/defaults/main.yml"
+   - "../../roles/dfs_install/vars/main.yml"
+  tasks:
+    - name: "make path: /var/syndata/journal/node/local/data/current"
+      file: >
+       dest='/var/syndata/journal/node/local/data/current'
+       state=directory
+       mode=0755
+       owner=hadoop
+       group=hadoop
+
+- hosts: "{{dfsc}}_jn"
+  remote_user: hadoop
+  gather_facts: false
+  vars_files:
+   - "../../roles/dfs_install/defaults/main.yml"
+   - "../../roles/dfs_install/vars/main.yml"
+  tasks:
+   - name: "stop journal nodes"
+     shell: >
+      {{pub_set_bash}} &&
+      hadoop-daemon.sh --script hdfs stop journalnode
+      executable=/bin/bash
+      
+   - name: "waitting..." 
+     wait_for: >
+      state=stopped timeout=90 port=8485 delay=12   
+
+- hosts: "{{dfsc}}_jn"
+  remote_user: hadoop
+  gather_facts: false
+  vars_files:
+   - "../../roles/dfs_install/defaults/main.yml"
+   - "../../roles/dfs_install/vars/main.yml"
+  tasks:
+   - name: "start journal nodes"
+     shell: >
+      {{pub_set_bash}} &&
+      hadoop-daemon.sh --script hdfs start journalnode
+      executable=/bin/bash
+      
+   - name: "waitting..." 
+     wait_for: >
+      state=started timeout=180 port=8485 delay=12
+
+- hosts: "{{dfsc}}_nn"
+  remote_user: hadoop
+  gather_facts: false
+  vars_files:
+   - "../../roles/dfs_install/defaults/main.yml"
+   - "../../roles/dfs_install/vars/main.yml"
+  tasks:
+   - name: "format name nodes in {{dfsc}}"
+     shell: >
+      {{pub_set_bash}} && echo -e "Y\nY\nY\n" | {{hadoop_home}}/bin/hdfs namenode -format -clusterid {{dfs_clusterid}}
+      executable=/bin/bash      
+
+#start name nodes
+- hosts: "{{dfsc}}_nn"
+  remote_user: hadoop
+  gather_facts: false
+  vars_files:
+   - "../../roles/dfs_install/defaults/main.yml"
+   - "../../roles/dfs_install/vars/main.yml"
+  tasks:
+   - name: "start name nodes"
+     shell: >
+      {{pub_set_bash}} &&
+      hadoop-daemon.sh --script hdfs start namenode
+      executable=/bin/bash
+      
+   - name: "waitting..." 
+     wait_for: >
+      state=started timeout=90 port={{dfs_namenode_rpc_port}} delay={{dfsc_start_delay}} 
+
+- hosts: "{{dfsc}}_nb"
+  remote_user: hadoop
+  gather_facts: false
+  vars_files:
+   - "../../roles/dfs_install/defaults/main.yml"
+   - "../../roles/dfs_install/vars/main.yml"
+  tasks:
+   - name: "format backup name nodes in {{dfsc}}"
+     shell: >
+      {{pub_set_bash}} && echo -e "Y\nY\n" | hdfs namenode -bootstrapStandby
+      executable=/bin/bash
+
+- hosts: "{{dfsc}}_nn"
+  remote_user: hadoop
+  gather_facts: false
+  vars_files:
+   - "../../roles/dfs_install/defaults/main.yml"
+   - "../../roles/dfs_install/vars/main.yml"
+  tasks:
+   - name: "format zkfc in {{dfsc}}"
+     shell: >
+      {{pub_set_bash}} &&
+      hdfs zkfc -formatZK
+      executable=/bin/bash
+
+- hosts: "{{dfsc}}_nn"
+  remote_user: hadoop
+  gather_facts: false
+  vars_files:
+   - "../../roles/dfs_install/defaults/main.yml"
+   - "../../roles/dfs_install/vars/main.yml"
+  tasks:
+   - name: "stop name nodes"
+     shell: >
+      {{pub_set_bash}} &&
+      hadoop-daemon.sh --script hdfs stop namenode
+      executable=/bin/bash
+      
+   - name: "waitting..." 
+     wait_for: >
+      state=stopped timeout={{dfsc_stop_timeout}} port={{dfs_namenode_rpc_port}} delay={{dfsc_stop_delay}}
+
+- hosts: "{{dfsc}}_jn"
+  remote_user: hadoop
+  gather_facts: false
+  vars_files:
+   - "../../roles/dfs_install/defaults/main.yml"
+   - "../../roles/dfs_install/vars/main.yml"
+  tasks:
+   - name: "stop journal node"
+     shell: >
+      {{pub_set_bash}} &&
+      hadoop-daemon.sh --script hdfs stop journalnode
+      executable=/bin/bash
+      
+   - name: "waitting..." 
+     wait_for: >
+      state=stopped timeout=90 port=8485 delay=6
+
+- include: "../zk/zk_stop.yml"

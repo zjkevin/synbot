@@ -1,0 +1,3 @@
+---
+- include : "../../pub_install/tasks/main.yml"
+

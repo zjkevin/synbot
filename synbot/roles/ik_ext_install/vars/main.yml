@@ -1,0 +1,43 @@
+---
+##############################WARNNING###############################
+#pub_install default vars
+#UNLESS NESSARY, the following configs should NOT be modified
+#Generally, we should overwrite it in a group var file.
+#####################################################################
+
+#################################
+#install configs for apps
+#################################
+pub_install_app_name:      "ik_ext"                #eg. "jdk"
+pub_install_package_name:  "syndata"
+pub_install_app_version:   "1.5.20"                 #"1.0.1"
+pub_install_type:          "unpack_install"         #unpack_install,copy_install
+pub_current_role:          "ik_ext_install"             #MUST be defined
+
+#custorm config to generate configs for "pub_install"
+dfs_install_pkgname:      "{{pub_install_package_name}}-{{pub_install_app_version}}"
+
+#local package file or source path, such as jdk.targ.gz or puppy_web
+#todo change it as public default
+pub_install_app_src:  "{{pub_install_pkgs_root}}/{{pub_install_package_name}}/{{dfs_install_pkgname}}.tar.gz"
+
+#the final path where the app will be installed to
+pub_install_app_home: "{{pub_install_apps_root}}/ikext"
+
+pub_install_app_group:     hadoop                     #default user group for app
+pub_install_app_user:      hadoop                     #default user name for app
+
+#todo redefine
+pub_install_temp_path: "{{pub_install_temp_root}}/{{pub_current_role}}"
+
+pub_install_app_paths:                          #list of pre paths
+ - dest: "{{pub_install_temp_path}}"
+ - dest: "{{pub_install_app_home}}"
+   mode: "0755"
+ - dest: "{{pub_install_apps_root}}/es/plugins"
+ - dest: "{{pub_install_apps_root}}/es/plugins/ik-analyzer"
+ - dest: "{{pub_install_apps_root}}/es/plugins/ik-analyzer/lib"
+
+synhold_ik_ext_files: 
+ - src: "{{pub_install_app_home}}/{{dfs_install_pkgname}}/jlibs/synhold-ik-ext/*"
+   dest: "{{pub_install_apps_root}}/es/plugins/ik-analyzer"

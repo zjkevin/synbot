@@ -1,0 +1,4 @@
+---
+#restart hive
+- include: "hive_stop.yml"
+- include: "hive_start.yml"

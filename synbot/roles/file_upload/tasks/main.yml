@@ -1,0 +1,5 @@
+---
+- name: upload file to the host
+  copy: >
+    src={{file}} 
+    dest={{path}}

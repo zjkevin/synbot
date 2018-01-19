@@ -1,0 +1,3 @@
+---
+- name: set hosts file to the host
+  template: src=hosts dest=/etc/hosts

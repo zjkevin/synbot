@@ -1,0 +1,3 @@
+#!/bin/bash
+
+{{spark_home}}/sbin/start-thriftserver.sh --hiveconf hive.server2.thrift.port={{spark_server_port}} --jars `echo {{pub_install_apps_root}}/spark_ext_libs/*.jar | sed 's/ /,/g'`

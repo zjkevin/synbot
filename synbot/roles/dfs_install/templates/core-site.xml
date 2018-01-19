@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<!-- edited with XMLSpy v2008 sp1 (http://www.altova.com) by 周华桢 (Synway) -->
+<configuration>
+<![CDATA[
+{# 全局变量定义 #}
+{% if zks == None %}
+    {% set zk_group = [] %}
+{% else %}
+    {% set zk_group = zks %}
+{% endif %}
+
+{# END全局变量定义 #}]]>    
+	<!-- 全局属性配置 -->
+	<property>
+		<name>hadoop.tmp.dir</name>
+		<value>{{hdata_tmp}}</value>
+		<description>***tmp目录的根，形如：/tmp/hadoop-${user.name}</description>
+	</property>
+	<!-- IO 属性配置 -->
+	<property>
+		<name>io.compression.codecs</name>
+		<value>{{io_compression_codecs}}</value>
+	</property>
+	<!-- 文件系统配置，file system properties -->
+	<property>
+		<name>fs.defaultFS</name>
+		<value>hdfs://mycluster</value>
+	</property>
+    <property>
+        <name>hadoop.proxyuser.hadoop.hosts</name>
+        <value>*</value>
+    </property>
+    <property>
+        <name>hadoop.proxyuser.hadoop.groups</name>
+        <value>hadoop</value>
+    </property>
+    <property>
+        <name>ha.zookeeper.quorum</name>
+        <value>{{zk_group|join(',')}}</value>
+    </property>
+</configuration>

@@ -1,0 +1,33 @@
+---
+##############################WARNNING###############################
+#zk default vars
+#UNLESS NESSARY, the following configs should NOT be modified
+#Generally, we should overwrite it in a group var file.
+#####################################################################
+
+
+zk_home:                          "{{pub_install_app_home}}"
+zk_data_home:                     "{{pub_install_data_root}}/zk/d1"
+zk_log_dir:                       "{{pub_install_log_root}}/zk"
+zk_user:                          hadoop
+zk_group:                         hadoop
+
+#################################
+#zk runtime configs
+#################################
+zk_data_dir:                      "{{zk_data_home}}"         # dataDir=/tmp/zookeeper, the directory where the snapshot is stored. do not use /tmp for storage, /tmp here is just example sakes.
+zk_tick_time:                     2000                       # The number of milliseconds of each tick,tickTime = 2000
+zk_init_limit:                    10                         # The number of ticks that the initial synchronization phase can take initLimit = 10
+zk_sync_limit:                    5                          # The number of ticks that can pass between sending a request and getting an acknowledgement syncLimit=5
+zk_client_port:                   2181                       # clientPort=2181, the port at which the clients will connect
+zk_server_port1:                  2888                       # server port peers.1
+zk_server_port2:                  3888                       # server port peers.2 
+zk_max_client_cnxns:              60                         # maxClientCnxns=60, the maximum number of client connections. increase this if you need to handle more clients
+zk_autopurge_snap_retain_count:   3                          # autopurge.snapRetainCount=3 The number of snapshots to retain in dataDir
+zk_autopurge_purge_interval:      1                          # autopurge.purgeInterval=1, Purge task interval in hours Set to "0" to disable auto purge feature
+
+#zk cluster admin configs , custom only
+zkc_start_delay:                  10
+zkc_start_timeout:                90
+zkc_stop_delay:                   10
+zkc_stop_timeout:                 90

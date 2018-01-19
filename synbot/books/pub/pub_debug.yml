@@ -1,0 +1,9 @@
+---
+- hosts: "{{hosts}}"
+  remote_user: hadoop
+  gather_facts: true
+  tasks:
+   - name: "debug vars"
+     debug: msg="{{item}}"
+     with_items:
+      - "{{hostvars}}"

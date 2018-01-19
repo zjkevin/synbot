@@ -1,0 +1,47 @@
+################################
+# zk Server List
+################################
+{# ansible comments:
+storm.zookeeper.servers:
+     - "server1"
+     - "server2"
+#}
+
+storm.zookeeper.servers:
+{% for host in groups[stormc_zkc] | sort %}
+{{' - "%s"' % host}}
+{% endfor %}
+
+nimbus.host: {{'"%s"' % storm_nimbus_host}}
+
+supervisor.slots.ports:
+{% for port in storm_supervisor_slots_ports | sort %}
+{{' - %d' % port }}
+{% endfor %}
+
+storm.local.dir: {{ '"%s"' % storm_local_dir}}
+
+# ##### These may optionally be filled in:
+#    
+## List of custom serializations
+# topology.kryo.register:
+#     - org.mycompany.MyType
+#     - org.mycompany.MyType2: org.mycompany.MyType2Serializer
+#
+## List of custom kryo decorators
+# topology.kryo.decorators:
+#     - org.mycompany.MyDecorator
+#
+## Locations of the drpc servers
+# drpc.servers:
+#     - "server1"
+#     - "server2"
+
+## Metrics Consumers
+# topology.metrics.consumer.register:
+#   - class: "backtype.storm.metric.LoggingMetricsConsumer"
+#     parallelism.hint: 1
+#   - class: "org.mycompany.MyMetricsConsumer"
+#     parallelism.hint: 1
+#     argument:
+#       - endpoint: "metrics-collector.mycompany.org"

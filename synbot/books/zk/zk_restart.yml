@@ -1,0 +1,4 @@
+---
+#restart zk nodes
+- include: "zk_stop.yml"
+- include: "zk_start.yml"

@@ -1,0 +1,18 @@
+---
+#start hbase master
+- hosts: "{{spark}}"
+  remote_user: "{{spark_user}}"
+  gather_facts: false
+  vars_files:
+   - "../../roles/spark_install/defaults/main.yml"
+   - "../../roles/spark_install/vars/main.yml"
+  tasks:
+   - name: "start spark"
+     shell: >
+      {{pub_set_bash}} &&
+      {{pub_install_apps_root}}/run_spark_server
+      executable=/bin/bash
+
+   - name: "waitting..." 
+     wait_for: >
+      state=started timeout={{spark_start_timeout}} port={{spark_server_port}} delay={{spark_start_delay}}    

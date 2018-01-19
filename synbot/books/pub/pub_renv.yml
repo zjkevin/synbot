@@ -1,0 +1,9 @@
+---
+- name: "fetch remote env vars to local path" 
+  hosts: "{{hosts | d('all')}}"
+  remote_user: root
+  gather_facts: false
+  vars:
+   pub_renv_local_path: "{{localpath}}"
+  roles:
+   - "../../roles/pub_renv"

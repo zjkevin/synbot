@@ -1,0 +1,19 @@
+---
+#stop puppy web server
+- hosts: "{{pwebc | default(puppy_web)}}"
+  remote_user: "{{puppy_web_user}}"
+  gather_facts: false
+  vars_files:
+   - "../../roles/puppy_web/defaults/main.yml"
+   - "../../roles/puppy_web/vars/main.yml"
+  tasks:
+   - name: "stop puppy web server"
+     shell: >
+      {{pub_set_bash}} &&
+      ps aux | grep -E \(python\)\\s+\(pweb.py\) | awk '{system("kill -TERM "$2)}'
+      executable=/bin/bash
+
+   - name: "waiting for puppy web to stop..." 
+     wait_for: >
+      state=stopped timeout=90 
+      port={{puppy_web_port}} 

@@ -1,0 +1,61 @@
+---
+- name: "hhaoop dir create"
+  remote_user: hadoop  
+  shell: >
+    {{pub_set_bash}} &&
+    hadoop fs -mkdir -p /apps/templeton
+    executable=/bin/bash
+
+- name: "mkdir dir on hdfs for java jars"
+  remote_user: hadoop
+  shell: >
+    {{pub_set_bash}} &&
+    hadoop fs -mkdir -p {{item.dest}}/lib
+    executable=/bin/bash
+  with_items: java_jars_dir
+
+- name: "copy syndata package to remote"
+  remote_user: root
+  copy: >
+    src={{pub_install_app_src}}
+    dest={{pub_temp_root}}/{{pub_current_role}}
+
+- name: "tar xzvf syndata package"
+  remote_user: root
+  shell: >
+    {{pub_set_bash}} &&
+    cd {{pub_temp_root}}/{{pub_current_role}} &&
+    tar -xzvf {{pub_install_app_src | basename}} &&
+    chown -R {{syndata_user}}:{{syndata_group}} {{pub_temp_root}}/{{pub_current_role}}/{{dfs_install_pkgname}} &&
+    chmod -R 0755 {{pub_temp_root}}/{{pub_current_role}}/{{dfs_install_pkgname}}    
+    executable=/bin/bash
+
+- name: "put idx jars to hadoop"
+  remote_user: hadoop
+  shell: >
+    {{pub_set_bash}} &&
+    cd {{pub_temp_root}}/{{pub_current_role}}/{{dfs_install_pkgname}}/jlibs &&
+    hadoop fs -put -p -f {{item.src}}/* {{item.dest}}
+    executable=/bin/bash
+  with_items: java_jars_dir
+
+- name: "update hive-x.x.x-bin.tar.gz to remote"
+  remote_user: root
+  copy: >
+    src={{pub_install_pkgs_root}}/hive/{{hive_tar_gz}}
+    dest=/var/syntmp/{{hive_tar_gz}}
+
+- name: "put files to hadoop"
+  remote_user: hadoop
+  shell: >
+    {{pub_set_bash}} &&
+    hadoop fs -test -f {{item.dest}} &&
+    exit_value=$?;
+    if [ ! $exit_value -ne 0 ];  then
+     hadoop fs -rm {{item.dest}};
+     hadoop fs -put {{item.src}} {{item.dest}};
+    else
+     hadoop fs -put {{item.src}} {{item.dest}}; 
+    fi 
+    executable=/bin/bash
+  with_items: files_tar_gz

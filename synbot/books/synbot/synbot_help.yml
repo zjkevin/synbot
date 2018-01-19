@@ -1,0 +1,10 @@
+---
+- name: "help of synbot modules" 
+  hosts: "127.0.0.1"
+  remote_user: root
+  gather_facts: false
+  tasks:
+  - name: hello world
+    shell: >
+        echo "\033[32m";
+        echo "Hello,world!"; 

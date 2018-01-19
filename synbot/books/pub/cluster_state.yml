@@ -1,0 +1,78 @@
+---
+- name: "listen zk service" 
+  hosts: "{{zkc}}"
+  remote_user: hadoop
+  gather_facts: false
+  vars_files:
+   - "../../roles/zk_install/defaults/main.yml"
+  vars:
+   zkc: zookeeper
+  tasks:
+   - name: "waitting zk service" 
+     wait_for: >
+      state=started timeout={{zkc_start_timeout}} port={{zk_client_port}} delay={{zkc_start_delay}}
+
+- name: "listen hdfs service" 
+  hosts: "{{dfsc}}_nn"
+  remote_user: hadoop
+  gather_facts: false
+  vars_files:
+   - "../../roles/dfs_install/defaults/main.yml"
+  vars:
+   dfsc: hdfs
+  tasks:
+   - name: "waitting dfs namenode" 
+     wait_for: >
+      state=started timeout=90 port={{dfs_namenode_rpc_port}} delay={{dfsc_start_delay}}
+
+#listen data nodes
+- hosts: "{{dfsc}}_dn"
+  remote_user: hadoop
+  gather_facts: false
+  vars_files:
+   - "../../roles/dfs_install/defaults/main.yml"
+  tasks:
+   - name: "waitting dfs datanode" 
+     wait_for: >
+      state=started timeout={{dfsc_start_timeout}} port={{dfs_datanode_rpc_port}} delay={{dfsc_start_delay}}
+
+#listen resource managers
+- hosts: "{{dfsc}}_rm"
+  remote_user: hadoop
+  gather_facts: false
+  vars_files:
+   - "../../roles/dfs_install/defaults/main.yml"
+  tasks:
+   - name: "waitting yarn resourcemanager"
+     wait_for: >
+      state=started timeout={{dfsc_start_timeout}} port={{yarn_resourcemanager_port}} delay={{dfsc_start_delay}}
+
+   - name: "waitting yarn resourcemanager scheduler" 
+     wait_for: >
+      state=started timeout={{dfsc_start_timeout}} port={{yarn_resourcemanager_scheduler_port}} delay={{dfsc_start_delay}}
+
+   - name: "waitting yarn resourcemanager resourcetracker" 
+     wait_for: >
+      state=started timeout={{dfsc_start_timeout}} port={{yarn_resourcemanager_resourcetracker_port}} delay={{dfsc_start_delay}}
+
+#listen history managers
+- hosts: "{{dfsc}}_hm"
+  remote_user: hadoop
+  gather_facts: false
+  vars_files:
+   - "../../roles/dfs_install/defaults/main.yml"
+  tasks:
+   - name: "waitting history managers" 
+     wait_for: >
+      state=started timeout={{dfsc_start_timeout}} port={{dfs_history_managers_port}} delay={{dfsc_start_delay}}
+
+#listen hbase master
+- hosts: "{{hbasec}}_master"
+  remote_user: "{{hbase_user}}"
+  gather_facts: false
+  vars_files:
+   - "../../roles/hbase_install/defaults/main.yml"
+  tasks:
+   - name: "waitting hbase master" 
+     wait_for: >
+      state=started timeout={{hbasec_master_start_timeout}} port={{hbasec_master_port}} delay={{hbasec_master_start_delay}}

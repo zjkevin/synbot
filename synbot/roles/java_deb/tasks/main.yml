@@ -1,0 +1,22 @@
+---
+- name: "make jdk temp directory"
+  file: >
+   path={{pub_install_temp_root}}/jdk
+   state=directory mode=0755 owner=root  group=root
+
+- name: Download jdk deb
+  get_url: >
+   url={{java_jdk_deb_url}} 
+   dest={{pub_install_temp_root}}/jdk/jdk.deb
+  
+- name: Install jdk deb
+  apt: >
+   deb={{pub_install_temp_root}}/jdk/jdk.deb
+   state=installed
+  
+- name: set env vars for java
+  template: >
+   src=syn_javaenv.sh 
+   dest=/etc/profile.d/syn_javaenv.sh
+   backup=yes\
+

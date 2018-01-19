@@ -1,0 +1,58 @@
+{# DUMP CONFIGS ON REMOTE HOST #}
+{# 全局变量定义 #}
+{% set dfs_group = dfsc %}
+{% set nn_group = '%s_nn' % dfsc %}
+{% set dn_group = '%s_dn' % dfsc %}
+{% set rm_group = '%s_rm' % dfsc %}
+{% set nm_group = '%s_nm' % dfsc %}
+{# END全局变量定义 #}
+################################
+##{{'configs on %s:' % (dfsc)}}
+################################
+
+################################
+##dfs_dataNodes:
+################################
+
+{% for dn in groups[dn_group] | sort %}
+ {{dn}}
+{% endfor %}
+
+################################
+##dfs_nameNodes:
+################################
+
+{% for nn in groups[nn_group] | sort %}
+{{nn}}
+{% endfor %}
+
+################################
+##dfs_nameNodes:
+################################
+
+{% for rm in groups[rm_group] | sort %}
+{{rm}}
+{% endfor %}
+
+################################
+##cluster_vars:
+################################
+
+{% set dictx = self._TemplateReference__context.parent.vars %}
+{% for k in dictx.vars | sort %}
+{{ '%s === %s' % (k,dictx[k]) }}
+{% endfor %}
+
+################################
+##host_vars:
+################################
+
+{% for host in groups['all'] | sort %}
+################################	
+#{{host}}:
+################################
+	{% for k in hostvars[host] | sort %}
+{{'%s === "%s"' % (k,hostvars[host][k])}}
+	{% endfor %}
+
+{% endfor %}

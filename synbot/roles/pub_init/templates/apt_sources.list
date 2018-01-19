@@ -1,0 +1,6 @@
+deb {{debian_source_prefix}}/p1/debian/ wheezy contrib main
+deb {{debian_source_prefix}}/p2/debian/ wheezy contrib main
+deb {{debian_source_prefix}}/p3/debian/ wheezy contrib main
+deb {{debian_source_prefix}}/p4/debian/ wheezy contrib main
+deb {{debian_source_prefix}}/p5/debian/ wheezy contrib main
+deb {{debian_source_prefix}}/p6/debian/ wheezy contrib main

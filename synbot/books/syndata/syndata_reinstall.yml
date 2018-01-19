@@ -1,0 +1,3 @@
+---
+- include: "syndata_uninstall.yml"
+- include: "syndata_install.yml"

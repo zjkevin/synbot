@@ -1,0 +1,59 @@
+---
+# virtual machine resource
+host_conf:
+    - manager1:
+        mounts:
+          - mount:
+            name: nn
+            disk: /dev/sda
+          - mount:
+            name: zk
+            disk: /dev/sdc
+        apps:
+          - zk
+          - ntp_servers
+          - hbase_master
+          - hadoop_namenode
+          - hadoop_resource_manager
+          - hadoop_history_job_manager
+          - hive
+        hosts: 
+         - poc1
+         - poc2
+    - manager_backup:
+        mounts:
+          - mount:
+            name: nn
+            disk: /dev/sdc
+        apps:
+          - hbase_master
+          - hadoop_namenode_backup
+          - hadoop_resource_manager
+        hosts: 
+         - poc2
+    - datanode1:
+        mounts:
+         - mount:
+           name: es
+           disk: /dev/sdc
+         - mount:
+           name: dn
+           disk: /dev/sdc
+         - mount:
+           name: jn
+           disk: /dev/sdc           
+        apps:
+          - es
+          - hbase_regionserver
+          - hadoop_datanode
+          - hadoop_journal
+        hosts:
+         - "poc[3~20]"
+# cluster app config
+cluster_app_config:
+    es_heap_size: 10g
+    hbase_heapsize: 10g
+    spark_executor_memory: 10g
+    # 60% spare memory, unit M
+    nodemanager_resource_memory: 50600
+    esc_name: es_test

@@ -1,0 +1,34 @@
+---
+- name: "install supervisor"
+  apt: pkg=supervisor state=present
+  tags:
+   - superv
+   - deploy
+   - config
+   - reconfig
+
+- name: stop supervisor
+  service: name=supervisor state=stopped
+  tags:
+   - pubint
+   - superv
+   - config
+
+- name: update supervisor configs
+  template: >
+   src=supervisord.conf
+   dest=/etc/supervisor/conf.d/supervisord_syndata.conf
+   mode=0755 owner=root group=root backup=yes
+  with_items: superv_apps_commands
+  when: superv_apps_commands is defined and superv_apps_commands is not none
+  tags:
+   - superv
+   - config
+   - reconfig
+
+- name: start supervisor
+  service: name=supervisor state=started
+  tags:
+   - pubint
+   - superv
+   - config

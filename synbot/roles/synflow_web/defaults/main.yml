@@ -1,0 +1,7 @@
+sf_web_app_port: 9400
+sf_web_try_times: 3
+sf_web_requests_timeout: 0.3
+sf_web_dict_segments: 16
+
+sf_web_user: "{{pub_install_app_user}}"
+sf_web_home: "{{pub_install_app_home}}"

@@ -1,0 +1,17 @@
+---
+- include : "../../pub_install/tasks/main.yml"
+
+- name: unlimit memory size for ES
+  shell: >
+   {{pub_set_bash}} && ulimit -l unlimited
+   executable=/bin/bash
+  tags:
+   - "{{pub_install_app_name}}"
+   - deploy
+   - config
+
+
+
+
+
+

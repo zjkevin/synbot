@@ -1,0 +1,6 @@
+---
+- hosts: "{{ntpc}}"
+  remote_user: root
+  gather_facts: false
+  roles:
+    - "../../roles/ntp_client"

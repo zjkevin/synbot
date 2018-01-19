@@ -1,0 +1,67 @@
+---
+install_steps:
+  - step_name: sshkey
+    state: 0
+    cmd: sbc -ssh
+    force_continue: 0
+    retry: 5
+
+  - step_name: sshkey
+    state: 0
+    cmd: sbc -hv
+    force_continue: 0
+    retry: 1
+
+  - step_name: hosts file upload 
+    state: 0
+    cmd: sbc -sendhosts --force
+    force_continue: 0
+    retry: 1    
+
+  - step_name: hv prepare
+    state: 0
+    cmd: ansible-playbook books/pub/hv_prepare.yml -e hosts=mother_land
+    force_continue: 0
+    retry: 1
+
+  - step_name: disk format
+    state: 0
+    cmd: fab vmpdd.format_disk_on_hv
+    force_continue: 0
+    retry: 1
+
+  - step_name: cluster_prepare
+    state: 0
+    cmd: ansible-playbook books/pub/cluster_prepare.yml
+    force_continue: 0
+    retry: 1
+
+  - step_name: cluster_restart
+    state: 0
+    cmd: ansible-playbook books/pub/cluster_restart.yml
+    force_continue: 0
+    retry: 1
+
+# - step_name: syndata_install
+#   state: 0
+#   cmd: ansible-playbook books/syndata/syndata_install.yml -e hosts=web_node
+#   force_continue: 0
+#   retry: 1
+
+# - step_name: hdfs_init
+#   state: 0
+#   cmd: ansible-playbook books/pub/hdfs_init.yml
+#   force_continue: 0
+#   retry: 1
+
+# - step_name: ik
+#   state: 0
+#   cmd: ansible-playbook books/syndata/ik_ext_prepare.yml
+#   force_continue: 0
+#   retry: 1
+
+# - step_name: syndata_start
+#   state: 0
+#   cmd: ansible-playbook books/syndata/syndata_start.yml -e hosts=web_node
+#   force_continue: 0
+#   retry: 1

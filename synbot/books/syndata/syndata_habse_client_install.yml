@@ -1,0 +1,37 @@
+---
+- include: "../pub/get_file_in_tar_gz.yml"
+  vars_files:
+   - "../../roles/hbase_install/defaults/main.yml"
+   - "../../roles/hbase_install/vars/main.yml"
+  vars:
+    hosts: hbase_master
+    path: "{{pub_install_app_home}}"
+
+- name: "mkdir install_apps_root" 
+  hosts: synhold_web
+  remote_user: root
+  gather_facts: false
+  tasks:
+   - name: "mkdir install_apps_root"
+     shell: >
+        mkdir -p "{{pub_install_apps_root}}"
+        executable=/bin/bash 
+
+- include: "../pub/file_upload.yml"
+  vars_files:
+   - "../../roles/hbase_install/defaults/main.yml"
+   - "../../roles/hbase_install/vars/main.yml"
+  vars:
+    hosts: synhold_web
+    file: "{{cntemplet_url}}/{{pub_install_app_home | basename}}.tar.gz"
+    path: "{{pub_install_apps_root}}"
+
+- name: "tar xzvf and create ln" 
+  hosts: synhold_web
+  remote_user: root
+  gather_facts: false
+  vars_files:
+   - "../../roles/hbase_install/defaults/main.yml"
+   - "../../roles/hbase_install/vars/main.yml"
+  roles:
+   - "../../roles/syndata_habse_client_install"

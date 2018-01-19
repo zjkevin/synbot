@@ -1,0 +1,16 @@
+---
+pub_current_role:          "hdfs_init"             #MUST be defined
+
+files_tar_gz:                        #list of tar_gz files
+ - src: "/var/syntmp/{{hive_tar_gz}}"
+   dest: "/apps/templeton/{{hive_tar_gz}}"
+
+java_jars_dir:
+ - src: "synhold-idxmr4es"
+   dest: "/synway/synhold/lib/idxmr4es"
+ - src: "synhold-idxmr4hb"
+   dest: "/synway/synhold/lib/idxmr4hb"
+ - src: "synlift-hudfs"
+   dest: "/synway/synlift/lib/hudfs"
+ - src: "synlift-mrh2r"
+   dest: "/synway/synlift/lib/mrh2r"

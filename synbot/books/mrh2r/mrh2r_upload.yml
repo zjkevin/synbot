@@ -1,0 +1,6 @@
+---
+- hosts: "{{tnc}}"
+  remote_user: root
+  gather_facts: false
+  roles:
+   - "../../roles/mrh2r_upload"

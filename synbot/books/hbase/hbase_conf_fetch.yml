@@ -1,0 +1,14 @@
+---
+#frtch hbase conf to cn
+- hosts: "{{hbasec}}_master"
+  remote_user: root
+  gather_facts: false
+  vars_files:
+   - "../../roles/hbase_install/defaults/main.yml"
+   - "../../roles/hbase_install/vars/main.yml"
+  tasks:
+   - name: "fetch hbase-site.xml"
+     fetch: >
+       src={{pub_install_app_home}}/conf/hbase-site.xml
+       dest={{cntemplet_url}}/hbase-site.xml
+       flat=yes

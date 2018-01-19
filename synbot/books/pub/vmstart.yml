@@ -1,0 +1,7 @@
+---
+- name: "start vm on the" 
+  hosts: "{{hosts}}"
+  remote_user: root
+  gather_facts: false
+  roles:
+   - "../../roles/user_add"

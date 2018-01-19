@@ -1,0 +1,4 @@
+---
+#restart puppy web node(s)
+- include: "pweb_stop.yml"
+- include: "pweb_start.yml"

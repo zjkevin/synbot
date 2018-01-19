@@ -1,0 +1,6 @@
+---
+- hosts: "{{pwebc}}"
+  remote_user: root
+  gather_facts: false
+  roles:
+   - "../../roles/puppy_web"

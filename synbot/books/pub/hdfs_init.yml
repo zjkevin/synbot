@@ -1,0 +1,19 @@
+---
+# - include: "../dfs/dfs_restart.yml"
+#   vars:
+#    dfsc: hdfs
+
+- name: "init dfs" 
+  hosts: "{{hdfs}}_nn"
+  remote_user: hadoop
+  gather_facts: false
+  roles:
+   - "../../roles/dfs_init"
+  vars_files:
+   - "../../roles/hive_install/defaults/main.yml"
+   - "../../roles/syndata_install/defaults/main.yml"
+   - "../../roles/syndata_install/vars/main.yml"
+  vars:
+   hdfs: hdfs
+
+

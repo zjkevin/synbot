@@ -1,0 +1,26 @@
+---
+#start hive
+- hosts: "{{hivec}}"
+  remote_user: hadoop
+  gather_facts: false
+  vars_files:
+   - "../../roles/hive_install/defaults/main.yml"
+   - "../../roles/hive_install/vars/main.yml"
+  tasks:
+   - name: "stop webhcat service"
+     shell: >
+      {{pub_set_bash}} && jps -m | grep hive-webhcat | awk '{system("kill "$1)}'
+      executable=/bin/bash
+
+   - name: "waitting..." 
+     wait_for: >
+      state=stopped timeout={{webhcat_stop_timeout}} port={{webhcat_server_port}} delay={{webhcat_stop_delay}} 
+
+   - name: "stop hive service"
+     shell: >
+      {{pub_set_bash}} && jps -m | grep hive-service | awk '{system("kill "$1)}'
+      executable=/bin/bash
+
+   - name: "waitting..." 
+     wait_for: >
+      state=stopped timeout={{hive_stop_timeout}} port={{hive_server_port}} delay={{hive_stop_delay}}

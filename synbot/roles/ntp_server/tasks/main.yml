@@ -1,0 +1,29 @@
+---
+
+- name: install NTPd service
+  apt: name=ntp state=present force=yes
+  tags:
+   - pubint
+   - ntp
+   - ntpserver
+
+- name: stop NTPd service
+  service: name=ntp state=stopped
+  tags:
+   - pubint
+   - ntp
+   - ntpserver
+
+- name: config NTPd service as SERVER
+  template: src=ntp.conf dest=/etc/ntp.conf
+  tags:
+   - pubint
+   - ntp
+   - ntpserver
+
+- name: start NTPd service as SERVER
+  service: name=ntp state=started
+  tags:
+   - pubint
+   - ntp
+   - ntpserver

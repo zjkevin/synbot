@@ -1,0 +1,41 @@
+---
+- include: "../zk/zk_install.yml"
+  vars:
+   zkc: zookeeper
+
+- include: "../dfs/dfs_install.yml"
+  vars:
+   dfsc: hdfs
+
+- include: "../pub/chown_vm.yml"
+
+- include: "../dfs/dfs_format.yml"
+  vars:
+   dfsc: hdfs
+   zkc: zookeeper
+
+- include: "../hbase/hbase_install.yml"
+  vars:
+   hbasec: hbase
+
+- include: "../pub/mysql_remove.yml"
+  vars:
+   hosts: hivec
+
+- include: "../hive/hive_install.yml"
+  vars:
+   hivec: hivec
+   hbase_master: hbase_master
+   zookeeper: zookeeper
+
+- include: "../spark/spark_install.yml"
+  vars:
+   spark: sparkc
+
+- include: "../es/es_install.yml"
+  vars:
+   esc: es
+
+- include: "../storm/storm_install.yml"
+  vars:
+   stormc: storm

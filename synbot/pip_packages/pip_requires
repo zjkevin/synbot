@@ -1,0 +1,12 @@
+behave
+happybase
+jinja2
+requests
+paste
+bottle
+pyes
+kazoo
+thrift
+nose
+fabric
+ansible

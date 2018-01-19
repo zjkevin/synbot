@@ -1,0 +1,4 @@
+---
+#restart syndata nodes
+- include: "syndata_stop.yml"
+- include: "syndata_start.yml"

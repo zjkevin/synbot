@@ -1,0 +1,12 @@
+---
+- include: "../hbase/hbase_conf_fetch.yml"
+  vars:
+   hbasec: hbase
+
+- hosts: "{{spark}}"
+  remote_user: root
+  gather_facts: false 
+  roles:
+   - "../../roles/spark_install"
+  vars: 
+   hivec: hivec

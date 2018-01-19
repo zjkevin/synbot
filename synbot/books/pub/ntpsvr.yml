@@ -1,0 +1,6 @@
+---
+- hosts: "{{ntps}}"
+  remote_user: root
+  gather_facts: false
+  roles:
+    - "../../roles/ntp_server"

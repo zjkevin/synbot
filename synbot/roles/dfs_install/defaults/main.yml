@@ -1,0 +1,54 @@
+---
+##############################WARNNING###############################
+#dfs_common default vars
+#UNLESS NESSARY, the following configs should NOT be modified
+#Generally, we should overwrite it in a group var file.
+#####################################################################
+
+hdfs_log_dir:          "{{pub_install_log_root}}/hdfs"
+#hadoop runtime
+hadoop_user:                              hadoop
+hadoop_group:                             hadoop
+
+#common io configs
+io_compression_codecs:                    ""                              #逗号分隔的IO压缩编码器列表，默认空。
+
+#hdfs configs
+dfs_clusterid:                        88861158
+
+dfs_replication:                      3
+yarn_scheduler_minimum_allocation_mb: 2048
+yarn_scheduler_maximum_allocation_mb: 20480
+
+#dfs acl
+dfs_permissions_superusergroup: supergroup
+
+#dfs namenode
+dfs_namenode_rpc_port:          9000
+dfs_zkfc_rpc_port:              9005
+dfs_namenode_logging_level:     info                                      #info,dir,block,all
+
+#dfs datanode
+dfs_datanode_rpc_port:              50010
+
+#dfs history manager
+dfs_history_managers_port:                        19888
+
+#for single host only
+
+#hdfs_admin configs,custom only
+dfsc_start_delay:                3
+dfsc_start_timeout:              90
+dfsc_stop_delay:                 3
+dfsc_stop_timeout:               90
+
+#yar resourcemanager configs
+yarn_resourcemanager_port:                 8032
+yarn_resourcemanager_scheduler_port:       8030
+yarn_resourcemanager_resourcetracker_port: 8031
+yarn_nodemanager_localizer_port:           8040
+yarn_nodemanager_webapp_port:              8042
+yarn_application_classpath:                "$HADOOP_CONF_DIR,$HADOOP_COMMON_HOME/share/hadoop/common/*,$HADOOP_COMMON_HOME/share/hadoop/common/lib/*,$HADOOP_HDFS_HOME/share/hadoop/hdfs/*,$HADOOP_HDFS_HOME/share/hadoop/hdfs/lib/*,$HADOOP_YARN_HOME/share/hadoop/yarn/*,$HADOOP_YARN_HOME/share/hadoop/yarn/lib/*"
+
+#HBASE_HOME
+HBASE_HOME_PATH: "{{pub_install_apps_root}}/{{hbase_install_name}}"

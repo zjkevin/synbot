@@ -1,0 +1,12 @@
+---
+- name: "clear /var/syntmp" 
+  hosts: "{{hosts}}"
+  remote_user: root
+  gather_facts: false
+  tasks:
+   - name: "rm -r /var/syntmp/*"
+     shell: >
+      rm -r /var/syntmp/*
+      executable=/bin/bash
+  vars:
+   hosts: installvm

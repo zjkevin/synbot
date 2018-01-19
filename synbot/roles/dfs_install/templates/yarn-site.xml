@@ -1,0 +1,93 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<configuration>
+<![CDATA[
+{# 全局变量定义 #}
+{% set dfs_group = dfsc %}
+{% set nn_group = '%s_nn' % dfsc %}
+{% set rm_group = '%s_rm' % dfsc %}
+{% if zks == None %}
+	{% set zk_group = [] %}
+{% else %}
+	{% set zk_group = zks %}
+{% endif %}
+{% if rms == None %}
+	{% set dfs_resourcemanager = [] %}
+{% else %}
+	{% set dfs_resourcemanager = rms %}
+{% endif %}
+
+{% if hdfs_data_mount_tmp == None %}
+	{% set mount_temp = [] %}
+{% else %}
+	{% set mount_temp = hdfs_data_mount_tmp %}
+{% endif %}
+{# END全局变量定义 #}]]>
+	<property>
+		<name>yarn.resourcemanager.scheduler.class</name>
+		<value>org.apache.hadoop.yarn.server.resourcemanager.scheduler.capacity.CapacityScheduler</value>
+	</property>
+	<property>
+	    <name>yarn.resourcemanager.ha.enabled</name>
+	    <value>true</value>
+	</property>	
+	<property>
+	      <name>yarn.resourcemanager.cluster-id</name>
+	      <value>yarn-cluster</value>
+	</property>	
+	<property>
+	        <name>yarn.resourcemanager.zk-address</name>
+	        <value>{{zk_group|join(',')}}</value>
+	</property>	
+	<property>
+	    <name>yarn.resourcemanager.ha.rm-ids</name>
+	    <value>{{dfs_resourcemanager|join(",")}}</value>
+	</property>
+	{% for rm in groups[rm_group] %}
+		{% set rm_index = loop.index %}
+	<property>
+	    <name>yarn.resourcemanager.hostname.rm{{rm_index}}</name>
+	    <value>{{rm}}</value>
+	</property>
+	{% endfor %}
+	<property>
+	    <name>yarn.resourcemanager.recovery.enabled</name>
+	    <value>true</value>
+	</property>
+	<property>
+	    <name>yarn.resourcemanager.store.class</name>
+	    <value>org.apache.hadoop.yarn.server.resourcemanager.recovery.ZKRMStateStore</value>
+	</property>
+	<property>
+		<name>yarn.scheduler.minimum-allocation-mb</name>
+		<value>{{yarn_scheduler_minimum_allocation_mb}}</value>
+	</property>
+	<property>
+		<name>yarn.scheduler.maximum-allocation-mb</name>
+		<value>{{yarn_scheduler_maximum_allocation_mb}}</value>
+	</property>
+	<property>
+		<name>yarn.nodemanager.local-dirs</name>
+		<value>{{mount_temp|join(",")}}</value>
+	</property>
+	<property>
+		<name>yarn.nodemanager.log-dirs</name>
+		<value>${yarn.log.dir}/userlogs</value>
+	</property>
+	<property>
+		<name>yarn.nodemanager.resource.cpu-vcores</name>
+		<value>8</value>
+	</property>
+	<property>
+		<name>yarn.nodemanager.aux-services</name>
+		<value>mapreduce_shuffle</value>
+	</property>
+	<property>
+		<name>yarn.nodemanager.aux-services.mapreduce_shuffle.class</name>
+		<value>org.apache.hadoop.mapred.ShuffleHandler</value>
+	</property>
+	<property>
+		<name>yarn.nodemanager.resource.memory-mb</name>
+		<value>{{nodemanager_resource_memory}}</value>
+	</property>
+</configuration>

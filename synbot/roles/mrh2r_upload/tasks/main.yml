@@ -1,0 +1,21 @@
+---
+- name: "make app directories"
+  file: >
+   dest={{item.dest}}
+   state=directory
+   mode={{item.mode | default('0755')}}
+   owner={{item.user | default(pub_install_app_user)}}
+   group={{item.group | default(pub_install_app_group)}}
+  with_items: pub_install_app_paths
+
+- name: "upload mrh2r jars"
+  copy: >
+   src={{item.src}}
+   dest={{item.dest | default(item.src)}}
+  with_items: pub_install_jars
+  when: pub_install_jars is not none
+
+#mode={{item.mode | default(0755)}}
+#owner={{item.user | default(pub_install_app_user)}}
+#group={{item.group | default(pub_install_app_group)}}
+

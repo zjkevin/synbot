@@ -1,0 +1,206 @@
+{{>toc}}
+
+v1.0.0
+
+h1. 什么是 synbot 
+
+synbot 是一个供系统管理员使用的命令行工具集。 每一个工具都以一组Linux主机（即集群）为操作目标，并在这些主机上做相同的事情，如部署软件、配置环境等。这些工具通常是命令行命令（Synbot Command,  *_SBC_* ）的形式，因此我们也可以说 synbot 就是一组 SBC 的集合。
+
+创建 synbot 的目的是简化集群的管理配置工作，提高这类工作的自动化程度。 想象一下对一个含100台机器的集群执行关机的工作： 在每台机器上都手工执行一下（简单的） @sudo shutdown@指令并不是一个简单的事情。 synbot 能把这一过程自动化。事实上  synbot  能做的远不止于此。
+
+h1. 工作原理
+
+synbot 通过一台计算机对大量其他（远程）计算机执行（批量）操作。用于控制的计算机被称为 _控制节点_ （control node， _*CN*_ ），而被操作的那些远程计算机被称作 _目标节点_ （target node， _*TN*_ ）。 CN可以是你使用的笔记本电脑，而TN通常是集群中的计算机节点。
+
+图1展示了  synbot  的工作原理：用户在CN上执行一个 SBC ， synbot 收到后向 TN 建立 SSH（Secure Shell） 连接，然后把该 SBC 转换成在TN上执行的一或多个命令（SSH Command， _*SC*_ ）并通过SSH远程执行它们。 用户可以根据需要选择让 synbot 顺序还是并发执行SC。
+
+SBC 按实现方式不同被分为两类：Ansible类（Ansible Command， _*AC*_ ）和Fabric类（Fabric Command， _*FC*_ ）。
+
+AC 是指用 *Ansible* 实现，并通过 Ansible 的 @ansible-playbook@ 命令来执行的 SBC 。 Ansible 是一款著名的开源 _*配置管理（Configuration Management，CM）*_ 软件 ， 而@ansible-playbook@ 是它提供的一个执行命令。 FC 是指那些用 Fabric（参见 message#1108 ） 实现的 SBC 。 注，synbot的主要构成是 AC 。 但有些工作用 Ansible 无法实现或实现起来过于复杂，因此采用Fabric自行开发实现了。
+<pre>
+                                                __
+                               .------------>  | .| 
+                              /                | .|  TN   
+                             / SC              |  |
+                            /                  |  |
+                       _________               |--|
+                      |         |     
+    o       SBC       |  synbot |         
+   (:)  --------->    |_________|  CN      
+   / \               /          /     
+                    /==========/     
+                                                __
+                           \                   | .|
+                            \ SC               | .|  TN
+                             \                 |  |
+                              `------------->  |  |
+                                               |--|
+</pre>图1： synbot 工作原理
+
+h2. 远程访问方式
+
+如前所述， synbot 是通过 SSH 访问远程主机（即TN）的。而 SSH 支持多种用户认证（登录）方式，如 公/私钥（public-key）、用户名/密码等。理论上 synbot 可以工作在任一种方式下。 但实际中 synbot 推荐采用公/私钥方式。这种方式使用简单，相对也更安全。
+
+公/私钥方式是 _*公钥技术（ Public-key Cryptography ）*_ 、或称 _*非对称秘钥技术（ Asymmetric Cryptography ）*_ 在SSH中的应用。 本文不对此技术做详细解释，需要的读者请自行搜索阅读相关资料。 这里只简要介绍 synbot 如何使用公私钥。
+
+要通过公私钥方式进行客户端（即CN）身份认证，你必须事先做一些准备工作：
+
+# 用 @ssh-keygen@ 工具创建一对秘钥，即公钥（Public Key， PUK）和私钥（Private Key，PRK）。
+这是两个文件。通常PUK会以“.pub”为后缀。如：
+<pre>wjq@cn:~$ ssh-keygen -C "My Test Key"</pre> 会为你创建两个文件 id_rsa 和 id_rsa.pub，分别是PRK和PUK（执行过程中 @ssh-keygen@会要求你输入PRK文件的名称，如果你不想用 id_rsa 这个文件名，给一个你喜欢的名字即可）。PUK是一种公开的信息，应提供给任何需要对你进行认证的人（如TN），而PRK是实际的“钥匙”，应妥善保存，不提供给任何人。
+# 用任一你知道的方式把PUK拷贝到 TN 的特定用户的 @.ssh/authorized_keys@文件中。比如可以用scp：
+先拷贝至TN
+<pre>wjq@my_cn:~$ scp ~/my-prk.pub wjq@my.tn.ip:/home/wjq/</pre>
+然后添加到@.ssh/authorized_keys@
+<pre>wjq@my_tn:~$ cat my-prk.pub >> .ssh/authorized_keys</pre> 当然，如果.ssh目录还不存在，手工创建即可。
+这一步实际是告诉 TN，“这个公钥的所有者是可信的人，请允许它访问你的资源”。
+# 最后，在synbot（或手工）登录 TN 时，只需向它提供PRK证明你是保存在它上面的那个PUK的真正所有者，即完成身份认证（登录成功）。这时PUK所在的那个用户账户，就是你登录后的用户（在此例中，我们用的是@wjq@这个用户）。
+
+上述3步需要注意的地方：
+
+* 由于synbot的很多工作需要 root 权限，通常我们会把 PUK 保存在 @/root/.ssh/authroized_keys@ 里面。这样在登录成功后，当前用户就是 root 。
+* 如果TN有很多台，第2步中把PUK拷贝到每个TN上是件很繁琐的事情。为此可以考虑使用 synbot 的一个FC “@hadm.preprolog@”。该工具正是为此目的创建的。
+* 在上述第3步 SSH 会读取你的PRK。如果PRK受密码保护的话（这是进一步的安全措施），系统会要求你输入PRK的密码（passphrase）。如果想实现无密码登录，在创建秘钥对时不使用密码或创建后再剔除密码就可以了。后者的具体做法请参考网上资料。 为安全起见，我们建议不要采用无密码登录方式。这种情况下 synbot 每访问一台主机（TN）都被被提示输入PRK的保护密码。如果有200台TN，岂不是太麻烦？ 此时可以用@ssh-agent@ 工具。这个小工具可以记住你的PRK密码，并当远端主机询问时把该密码提供给它，从而省去了你自己频繁输入密码的麻烦。
+
+h1. 使用前提
+
+synbot 只能工作在Linux系统上。对CN和TN均是如此。
+
+在TN上需安装 SSH 服务 和 Python 2.5以上版本。 由于大多数Linux系统默认都已安装这两样东西，一般你无需对TN做太多准备工作。
+
+synbot 的主要活动都发生在CN（可以是一台笔记本电脑）上。它对CN的要求也相对多一些。具体讲CN上必须安装了以下软件：
+
+# Python (>=2.6)
+# Ansible
+# Fabric
+
+后两者都可以手工去官网下载安装，也可以通过 Python的包管理工具 @pip@ 来安装，如@pip install ansible@。
+
+如果你想把你的 Windows 电脑做CN，给它安装一个Linux虚拟机即可。
+
+h1. 安装 synbot 
+
+synbot 是绿色软件，即它无需安装。你拿到 synbot 软件包拷贝到CN上就可以开始使用了。比如，你可以直接svn下载最新的 synbot 到你的CN上：
+
+    svn export http://svn.repo.s/syndatapoc/tags/synbot-0.1.2
+
+h2. 目录结构
+
+synbot的目录结构如下所示。
+<pre>
+fabfile
+  |-- hadm.py
+  |-- vmp.py
+  |-- ..
+group_vars
+  |-- all
+  |-- hadoop_cluster_1
+  |-- ..
+roles
+  |-- java
+  |-- hadoop
+  |-- ..
+ansible.cfg
+hosts
+es.yml
+ntpsvr.yml
+</pre>
+synbot 根目录下可能还有其他文件（如readme），但最重要的就是上图所示的这些了。下面逐一做个说明。注意，本节内容不是使用synbot必须的。
+
+* *fabfile* 如前所述，有些SBC是用 fabric 实现的。此目录正是放这些代码的地方。这些代码被组织成一个个 python模块（module），即 “.py” 文件。每个模块实现了某些特定的 SBC 。 
+* *group_vars* 用户可以通过变量控制SBC命令的执行方式。synbot允许用户对同一个变量在针对不同集群执行时使用不同的值。此目录用来存放不同集群的变量值。这些文件的文件名必须是集群名称（定义在hosts文件中），而文件内容必须是yaml格式。 其中一个特定文件，即“all”，存放了适用于所有集群的变量值。
+* *roles* 这里是定义ansible角色（role）的地方。role 是synbot用来实现 AC 的方式。关于Ansible的详细内容请参见 ansible官方文档。
+* *ansible.cfg* 这是ansible的配置文件，用来设置Ansible的环境参数。
+* *hosts* 这里定义了你要操作的目标集群（由多个 TN 构成）
+* *xxx.yml* 这就是synbot的AC。如示例展示了两个AC，分别是 es.yml 和 ntpsvr.yml 。
+
+h1. 如何使用
+
+在 CN 上安装完毕后，使用 synbot 很简单：打开一个命令行窗口，切换到 synbot目录下执行你需要的 SBC 即可。虽说如此，你确实需要设置一些参数才能让 SBC 有效工作。
+
+h2. 设置参数
+
+SBC 执行时需要你告诉它被操作的目标即TN和一些运行时变量。它们分别由两个参数文件，@./hosts@ 和 @./group_vars/all@ 来定义。
+
+h3. 设置TN
+
+TN被配置在 synbot 根目录下的 hosts 文件中。hosts 是一个 @.ini@ 格式的配置文件，里面定义了（多个）集群及其包含的主机名。这些主机名就是TN。很多 SBC 命令都接收一个参数 _hosts_ 用来指明所操作的集群。 SBC 正是从hosts中找到这个集群从而确定TN的。如下例定义了两个集群，分别是 clu1 和 clu2。前者包含了 p1n0和p1n1两个TN；后者包含了p1n0、p2n0以及p1n1三个TN。注意一个TN可以同时属于多个集群。
+<pre>
+[clu1]
+p1n0
+p1n1
+
+[clu2]
+p1n0
+p2n0
+p1n1
+</pre>
+
+synbot 要求 hosts 中必须配置一个物理集群，该集群中的所有TN都是物理主机。而其他集群中的TN都物理机之上的虚拟机。这个物理集群的名称默认是“mother_land”。此名称可以通过配置变量修改。
+
+h3. 设置变量
+
+SBC 执行时还需要一些变量告知其所需的信息。绝大部分变量都有合理的默认值，因此你不必逐个设置这些变量，除非你有特殊要求。这些变量被定义在 @./group_vars@ 目录下的文件中。这些文件以集群名称命名，定义仅适用于对应集群的变量，并且也是ini格式。其中一个文件 @all@ 定义了适用于所有集群的变量，即全局变量。目前 synbot 支持的全局变量及其默认值如下：
+
+* *physical_cluster*: @mother_land@ 。物理集群的名称。
+* *default_domain*: @dev.s@ 。集群域名。配置在hosts中的所有TN均采用此域名。如上例中的p1n0，其实际主机地址为 @p1n0.dev.s@。
+* *pnm_rgx*: @^[^\d]+(\d+)$@ 。 物理主机名格式。这是一个正则表达式。此正则表达式必须包含一个数字 _组_ （@(\d+)@）供 synbot 提取该物理主机的序号。
+* *vnm_rgx*: @^[^\d]+(\d+)[^\d]+(\d+)$@ 。虚拟机名称格式。这是一个正则表达式。此正则表达式必须包含两个数字 _组_ （@(\d+)@）。第一个 _组_ 供 synbot 提取该虚拟机归属的该物理主机的序号；第二个是其自身的序号。
+* *pubkey*: @~/.ssh/id_rsa_bigpal.pub@ 。  synbot 采用 SSH 秘钥方式访问TN。这里设置公钥文件的地址。
+* *iuser*: @bigpal@ 。 初始用户账户。任何一台TN（不论物理机还是虚拟机）都必须预设一个初始的用户账户，供 synbot 做第一次的登录。
+* *ipwd*: @you guess@。初始用户的密码。
+
+h2. 执行 SBC
+
+设置好参数后，在命令行上输入 SBC 即可执行它们（必须在 synbot 的安装目录下执行）。再次提醒，大部分 SBC 将在所有TN上执行操作，因此执行前请考虑清楚。下面是两个例子。
+
+*FC* <pre>wjq@p1n5:~$ fab stopc:pocs</pre> 此命令中， @stopc@ 是一个 FC ，@pocs@ 是命令参数。假设此@stopc@的功能为关闭主机，执行此命令后，集群@pocs@（即其包含的所有主机）将被关机。注，命令的功能及其参数，是由命令的开发者定义并实现的。
+
+*AC* <pre>wjq@p1n5:~$ ansible-playbook deploy-hadoop.yml -i pocs</pre> 此例中，@deploy-hadoop@是一个AC。根据其名称我们大概可猜到，它可能是向集群@pocs@的每台主机上部署hadoop。
+
+*命令参考*
+
+下面是一个简要命令参考：
+* 查看所有可用的FC：<pre>wjq@p1n5:~$ fab -l</pre>
+* 查看某 FC 的详细说明：<pre>wjq@p1n5:~$ fab -d stopc</pre>
+* 查看所有可用的AC：所有的AC命令都是通过yml语法实现的。它们被定义在synbot目录下，以 “.yml” 为后缀。如 @foo.yml@ 定义了AC命令 @foo@。 其执行方式为 @ansible-playbook foo.yml@
+* 查看某 AC 的详细说明： 一个 AC 命令往往由多个连续执行的任务（task）构成。 要查看某个AC命令会执行哪些任务，可以用 @ansible-playbook --list-tasks <AC>@ 方式查看。如 @ansible-playbook --list-tasks foo.yml@ 。 @--list-tasks@ 是 @ansible-playbook@ 命令众多执行选项中的一个。 要查看所有选项，单纯执行@ansible-playbook@命令即可。
+* 一个playbook可以有运行参数。这种参数可以在命令行通过 @-e@选项提供。比如，@foo.yml@如果有一个参数@bar@，则使用@foo.yml@时可以通过下述方式提供这个参数：<pre>wjq@p1n5:~$ ansible-playbook foo.yml -e "bar=123" -i pocs</pre>
+
+h1. 功能清单
+
+|名称                              |前提                    |功能              |备注|
+|books/dfs/dfs_restart.yml        |                        |重启dfs集群,参数dfsc|即安装hadoop，dfsc表示dfs集群名称|
+|books/dfs/dfs_stop.yml           |                        |安装dfs集群，参数dfsc||
+|books/dfs/dfs_dump_cfg.yml       |                        |获取dfs集群配置，参数dfsc|上传到服务器|
+|books/dfs/dfs_debug.yml          |                        |保留功能||
+|books/dfs/dfs_format.yml         |                        |格式化化集群，参数dfsc||
+|books/dfs/dfs_start.yml          |                        |启动dfs集群，参数dfsc||
+|books/dfs/dfs_install.yml        |                        |安装dfs集群，参数dfsc|-t config仅仅更新配置，ansible选项，表示tags|
+|books/dfs/dfs_reformat.yml       |                        |重新格式化，参数dfsc||
+|books/synflow/synflow_web.yml    |                        |安装synflow_web||
+|books/es/es_install.yml          |                        ||esc|
+|books/es/es_restart.yml          |                        |||
+|books/es/es_stop.yml             |                        |||
+|books/es/es_start.yml            |                        |||
+|books/java/java_install.yml      |                        |安装java|拷贝安装|
+|books/java/java_deb.yml          |                        |安装java|deb包安装，未二次测试|
+|books/storm/storm_install.yml    |                        ||stormc|
+|books/storm/storm_start.yml      |                        |||
+|books/storm/storm_restart.yml    |                        |||
+|books/storm/storm_stop.yml       |                        |||
+|books/zk/zk_install.yml          |                        |zookeeper安装，参数zkc，表示集群名称|zkc|
+|books/zk/zk_start.yml            |                        |||
+|books/zk/zk_restart.yml          |                        |||
+|books/zk/zk_stop.yml             |                        |||
+|books/pub/pub_debug.yml          |                        |开发调试用，保留||
+|books/pub/pub_renv.yml           |                        |获取远程机器的环境变量，放置在指定文件夹||
+|books/pub/useradd.yml            |                        |添加用户|参数hosts,user,pwd|
+|books/pub/ntpclient.yml          |                        |安装ntpclients|参数ntpclients,ntpc|
+|books/pub/ntpsvr.yml             |确保有可用的APT源（source）|安装ntp server|参数ntpc|
+|books/pub/station.yml            |                        |初始化工作机CN|目前仅仅更新ssh配置，用户取消known_hosts严格校验|
+|books/pub/sshkey.yml             |                        |分发pubkey|sshpass -p <passwd for root> ansible-playbook .. -k |
+|books/pub/userrm.yml             |                        |删除用户||
+|books/pub/vm_setres.yml          |                        |设置虚拟机资源，内存和CPU|mem,cpu,flag_restart|
+|books/puppy/pweb.yml             |                        |安装puppy web||
+|books/syndata/syndata_install.yml|                        |安装整个syndata集群|参数dfsc,zkc,esc,stormc|

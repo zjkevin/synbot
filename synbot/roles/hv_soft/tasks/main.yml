@@ -1,0 +1,35 @@
+---
+- name: update source
+  shell: >
+    apt-get update
+    executable=/bin/bash
+    
+- name: kpartx
+  apt: pkg=kpartx state=present force=yes
+
+- name: sysstat
+  apt: pkg=sysstat state=present force=yes
+
+- name: kvm
+  apt: pkg=kvm state=present force=yes
+
+- name: libvirt-bin
+  apt: pkg=libvirt-bin state=present force=yes
+
+- name: virtinst
+  apt: pkg=virtinst state=present force=yes
+
+- name: python2.7-dev
+  apt: pkg=python2.7-dev state=present force=yes
+
+- name: python-setuptools
+  apt: pkg=python-setuptools state=present force=yes
+
+- name: python-pip
+  apt: pkg=python-pip state=present force=yes
+
+- name: bridge-utils
+  apt: pkg=bridge-utils state=present force=yes
+
+- name: sudo
+  apt: pkg=sudo state=present force=yes

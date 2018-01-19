@@ -1,0 +1,32 @@
+---
+#set memory and cpus for vm
+- name: "shutdown down {{vm}}"
+  virt: >
+   name={{vm}} state=shutdown
+
+- name: "waiting.." 
+  wait_for: >
+    host={{vm}} state=stopped 
+    delay=5 timeout=60 port=22
+
+- name: "set memory to {{mem}}G , {{vm}}"
+  shell: >
+   {{pub_set_bash}} &&
+   virsh setmaxmem {{vm}} {{mem}}G --config && 
+   virsh setmem {{vm}} {{mem}}G --config
+   executable=/bin/bash
+
+- name: "set vcpu to {{cpu}}, {{vm}}"
+  shell: >
+   {{pub_set_bash}} && 
+   virsh setvcpus {{vm}} {{cpu}} --config --maximum &&
+   virsh setvcpus {{vm}} {{cpu}} --config
+   executable=/bin/bash
+
+- name: "start/restart vm {{vm}}"
+  virt: "name={{vm}} state=running"
+  when: flag_restart
+
+- name: "waiting.."     
+  wait_for: "host={{vm}} state=started delay=5 timeout=60 port=22"
+  when: flag_restart

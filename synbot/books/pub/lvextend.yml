@@ -1,0 +1,7 @@
+---
+- name: "lvextend on the vm" 
+  hosts: "{{hosts}}"
+  remote_user: root
+  gather_facts: false
+  roles:
+   - "../../roles/vm_lvextend"

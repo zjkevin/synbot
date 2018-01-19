@@ -1,0 +1,62 @@
+---
+##############################WARNNING###############################
+#pub_install default vars
+#UNLESS NESSARY, the following configs should NOT be modified
+#Generally, we should overwrite it in a group var file.
+#####################################################################
+
+#################################
+#install configs for apps
+#################################
+pub_install_app_name:      "spark"                  #eg. "jdk"
+pub_install_app_version:   "1.2.0-bin-hadoop2.3"                 #"1.0.1"
+pub_install_type:          "unpack_install"         #unpack_install,copy_install
+pub_current_role:          "spark_install"          #MUST be defined
+
+#custorm config to generate configs for "pub_install"
+spark_install_pkgname:      "{{pub_install_app_name}}-{{pub_install_app_version}}"
+
+#local package file or source path, such as jdk.targ.gz or puppy_web
+#todo change it as public default
+pub_install_app_src:  "{{pub_install_pkgs_root}}/{{pub_install_app_name}}/{{spark_install_pkgname}}.tar.gz"
+
+#the final path where the app will be installed to
+pub_install_app_home: "{{pub_install_apps_root}}/{{spark_install_pkgname}}"
+
+pub_install_app_group:     hadoop                     #default user group for app
+pub_install_app_user:      hadoop                     #default user name for app
+
+#todo redefine
+pub_install_temp_path: >
+ {{pub_install_temp_root}}/{{pub_current_role}}
+
+#todo redefine.
+pub_install_apps_roots:                            #public roots for app install
+ - dest: "{{pub_install_apps_root}}"
+ - dest: "{{pub_install_temp_root}}"
+
+pub_install_app_paths:                           #list of pre paths
+ - dest: "{{pub_install_temp_path}}"
+ - dest: "{{spark_home}}"
+ - dest: "{{pub_install_log_root}}/spark"
+ - dest: "{{pub_install_data_root}}"
+
+#system ENV template file, in templates folder
+#pub_install_app_envfile: "../../roles/java_install/templates/syn_javaenv.sh"
+#pub_install_app_envfile: "syn_sparkenv.sh"
+
+pub_install_app_templates:                        #list of template files
+ - src: "run_server"
+   dest: "{{pub_install_apps_root}}/run_spark_server"
+ - src: "run_spark"
+   dest: "{{pub_install_apps_root}}/run_spark"
+ - src: "hive-site.xml"
+   dest: "{{pub_install_app_home}}/conf/hive-site.xml"
+ - src: "spark-env.sh"
+   dest: "{{pub_install_app_home}}/conf/spark-env.sh"
+ - src: "spark-defaults.conf"
+   dest: "{{pub_install_app_home}}/conf/spark-defaults.conf"
+
+pub_install_app_links:                             #list of pre links
+- src: "{{spark_home}}"
+  link: "{{pub_install_apps_root}}/spark"

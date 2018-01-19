@@ -1,0 +1,5 @@
+---
+- name: prepare ssh key to the remote host for root
+  authorized_key: user="{{remoteuser|default('root')}}"
+                  key="{{localkey|default(lookup('file','~/.ssh/id_rsa.pub')) }}"
+                  unique=yes

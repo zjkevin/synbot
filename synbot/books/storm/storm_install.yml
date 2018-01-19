@@ -1,0 +1,6 @@
+---
+- hosts: "{{stormc}}"
+  remote_user: root
+  gather_facts: false
+  roles:
+   - "../../roles/storm_install"

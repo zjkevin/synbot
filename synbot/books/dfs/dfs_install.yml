@@ -1,0 +1,6 @@
+---
+- hosts: "{{dfsc}}"
+  remote_user: root
+  gather_facts: false
+  roles:
+   - "../../roles/dfs_install"

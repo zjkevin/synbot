@@ -1,0 +1,38 @@
+---
+- include: "../../pub_install/tasks/main.yml"
+
+- name: install mysql-server
+  apt: pkg=mysql-server state=present force=yes
+
+- name: set root password
+  shell: >
+    if [ ! -f "{{pub_temp_root}}/mysql_root_pwd_change.flag" ]; 
+    then
+      /usr/bin/mysqladmin -u root -h 'localhost' password "synway" &&
+      touch {{pub_temp_root}}/mysql_root_pwd_change.flag create file
+    fi
+    executable=/bin/bash
+
+- name: python-mysqldb
+  apt: pkg=python-mysqldb state=present force=yes  
+
+- name: create azkabandb
+  mysql_db: name=azkaban login_user=root login_password=synway state=present
+
+- name: set azkaban privileges on azkabandb
+  shell: >
+    if [ ! -f "{{pub_temp_root}}/azkaban_privileges_on_azkabandb.flag" ];
+    then
+      mysql -uroot -psynway -e "grant all privileges on *.* to 'azkaban'@'%' identified by 'azkaban'; flush privileges;" &&
+      mysql -uroot -psynway -e "grant all privileges on *.* to 'azkaban'@'{{groups[azkaban][0]}}' identified by 'azkaban'; flush privileges;" &&
+      mysql -uroot -psynway -e "grant all privileges on *.* to 'azkaban'@'localhost' identified by 'azkaban'; flush privileges;" &&
+      sed -i '/bind-address/'d /etc/mysql/my.cnf &&
+      sed -i '$a \\n' /etc/mysql/my.cnf &&
+      sed -i '$a bind-address = 0.0.0.0' /etc/mysql/my.cnf &&
+      touch {{pub_temp_root}}/azkaban_privileges_on_azkabandb.flag && 
+      /etc/init.d/mysql restart
+    fi
+    executable=/bin/bash
+
+
+

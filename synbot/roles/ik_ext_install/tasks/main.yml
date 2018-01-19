@@ -1,0 +1,79 @@
+---
+- name: "check/make public app directories"
+  file: >
+   dest={{item.dest}}
+   mode={{item.mode | default('0755')}}
+   state=directory owner=root  group=root
+  with_items: pub_install_apps_roots
+  when: pub_install_apps_roots is defined
+  tags:
+   - "{{pub_install_app_tag | default(pub_install_app_name)}}"
+   - deploy
+   - install
+   - unpack
+   - public
+   - prepare
+
+- name: "make app directories"
+  file: >
+   dest={{item.dest}}
+   state=directory
+   mode={{item.mode | default('0755')}}
+   owner={{item.user | default(pub_install_app_user)}}
+   group={{item.group | default(pub_install_app_group)}}
+  with_items: pub_install_app_paths
+  tags:
+   - "{{pub_install_app_tag | default(pub_install_app_name)}}"
+   - deploy
+   - install
+   - prepare
+   - unpack
+
+- name: "remove old packages"
+  shell: >
+   {{pub_set_bash}} &&
+   ([ ! -e {{pub_install_temp_path}} ] || rm -r {{pub_install_temp_path}})
+   executable=/bin/bash
+  when: pub_install_type == "unpack_install" and (flag_clean_old_packages | default(false))
+  tags:
+   - "{{pub_install_app_tag | default(pub_install_app_name)}}"
+   - deploy
+   - install
+   - unpack
+   - rmbad
+
+- name: "upload package file"
+  copy: >
+   src="{{pub_install_app_src}}"
+   dest={{pub_install_temp_path}}
+   mode=0755
+   owner={{pub_install_app_user}} 
+   group={{pub_install_app_group}}
+  tags:
+   - "{{pub_install_app_tag | default(pub_install_app_name)}}"
+   - deploy
+   - install
+   - unpack
+  when: pub_install_type == "unpack_install"
+
+- name: "unpack install package"
+  shell: >
+   {{pub_set_bash}} &&
+   tar -xzf {{pub_install_temp_path}}/{{pub_install_app_src | basename}} &&
+   chown -R {{pub_install_app_user}}:{{pub_install_app_group}} {{pub_install_app_home}}
+   executable=/bin/bash chdir={{pub_install_app_home}}
+  with_items: 
+   - "{{pub_install_temp_path}}"
+  when: pub_install_type == "unpack_install"
+  tags:
+   - "{{pub_install_app_tag | default(pub_install_app_name)}}"
+   - deploy
+   - install
+   - unpack
+
+- name: "copy synhold-ik-ext to es plugin"
+  shell: >
+    cp -r {{item.src}} {{item.dest}}
+    executable=/bin/bash
+  with_items: synhold_ik_ext_files
+  when: synhold_ik_ext_files is defined

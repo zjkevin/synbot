@@ -1,0 +1,31 @@
+---
+install_steps:
+  - step_name: syndata install
+    state: 0
+    cmd: ansible-playbook books/syndata/syndata_install.yml -e hosts=web_node
+    force_continue: 0
+    retry: 1
+
+  - step_name: syndata prepare
+    state: 0
+    cmd: ansible-playbook books/syndata/syndata_prepare.yml -e hosts=web_node
+    force_continue: 0
+    retry: 1
+
+  - step_name: syndata prepare
+    state: 0
+    cmd: ansible-playbook books/syndata/ik_ext_prepare.yml
+    force_continue: 0
+    retry: 1
+
+  - step_name: restart es
+    state: 0
+    cmd: ansible-playbook books/es/es_restart.yml -e esc=es
+    force_continue: 0
+    retry: 1
+
+  - step_name: azkaban install
+    state: 0
+    cmd: ansible-playbook books/azkaban/azkaban_install.yml -e azkaban=web_node
+    force_continue: 0
+    retry: 1

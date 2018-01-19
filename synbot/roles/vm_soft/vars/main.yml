@@ -1,0 +1,25 @@
+---
+##############################WARNNING###############################
+#pub_install default vars
+#UNLESS NESSARY, the following configs should NOT be modified
+#Generally, we should overwrite it in a group var file.
+#####################################################################
+
+#################################
+#install configs for apps
+#################################
+pip_index_url: "{{pip_source_address}}"
+pip_packages: 
+ - pack: "fabric"
+ - pack: "kazoo"
+ - pack: "jinja2"
+ - pack: "requests"
+ - pack: "paste"
+ - pack: "bottle"
+ - pack: "thrift"
+ - pack: "pyes"
+ - pack: "nose"
+ - pack: "happybase"
+ - pack: "behave" 
+
+

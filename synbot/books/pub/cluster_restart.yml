@@ -1,0 +1,3 @@
+---
+- include: "cluster_stop.yml"
+- include: "cluster_start.yml"

@@ -1,0 +1,23 @@
+---
+- name: "create ln and tar -xzvf xxx.tar.gz"
+  shell: > 
+    cd {{pub_install_apps_root}} &&
+    tar -xzvf {{pub_install_app_home | basename}}.tar.gz &&
+    chown {{hbase_user}}:{{hbase_user}} {{pub_install_app_home | basename}} -R &&
+    ln {{pub_install_apps_root}}/{{pub_install_app_home | basename}} /hbase
+    executable=/bin/bash
+
+- name: "remove xxx.tar.gz on the remote"
+  shell: >
+    cd {{pub_install_apps_root}} &&
+    rm {{pub_install_app_home | basename}}.tar.gz
+    executable=/bin/bash
+
+- name: put env file to profile.d
+  template: >
+   src=../../roles/{{pub_current_role}}/templates/{{pub_install_app_envfile}}
+   dest="/etc/profile.d"
+   owner={{pub_install_app_user}}
+   group={{pub_install_app_group}}
+   backup=yes
+  when: pub_install_app_envfile is defined

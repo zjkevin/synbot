@@ -1,0 +1,69 @@
+---
+##hadm.py
+physical_cluster:   mother_land
+default_domain:     dev.s
+pnm_rgx:            ^[^\d]+(\d+)$
+vnm_rgx:            ^[^\d]+(\d+)[^\d]+(\d+)$
+pubkey:             ~/.ssh/id_rsa.pub
+iuser:              root
+ipwd:               synway
+
+#source
+debian_source_prefix: 
+pip_source_address: 
+cntemplet_url: /vm/ostemplet
+pub_install_pkgs_root: ~/packages
+nameserver_ip: 192.168.60.171
+
+#global paths(remote)
+pub_install_apps_root: /usr/lib
+pub_data_root:            /var/syndata                #root path for user data
+pub_install_log_root: /var/log
+pub_temp_root: /var/syntmp
+python_cmd: /usr/bin/python
+
+#global paths , locally
+pub_local_temp_root:       "{{pub_temp_root}}"
+
+#root path where the programs should be installed.
+pub_install_synapps_root:  /var/syndata/apps
+pub_install_data_root:     "{{pub_data_root}}"
+pub_install_temp_root:     "{{pub_temp_root}}"
+
+#default path, where to hold the cluster vars (configs)
+pub_vars_dump_path:        "{{pub_install_data_root}}/cfgdmp"
+
+#ansible modules
+pub_set_bash:              "source /etc/profile && source ~/.profile"  #for shell module to prepare system ENV.
+
+pub_superv_port:       6800
+
+#hv lv setting
+ostemplet_lv_size: 20G
+mount_ostemplet: /vm/ostemplet
+lv_name: ostemplet
+vg_name: vgapp
+
+#img files
+file_items: vmtemplet.xml,debian71.img.tar.gz
+#unzip files which in file_items you want to unzip
+unzip_imgs: debian71.img
+
+#vm img param don't change unless you change the vm img
+os_size: 10G
+
+#vm parameter
+swap_size: 1G
+#app_size: 69G
+mem: 2
+current_mem: 2
+vcpu: 2
+
+current_img: img1
+
+#app parameter
+es_heap_size: 28g
+hbase_heapsize: 24g
+spark_executor_memory: 1g
+nodemanager_resource_memory: 51200
+esc_name: poc1_develop

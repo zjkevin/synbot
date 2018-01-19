@@ -1,0 +1,36 @@
+---
+- include: "../../pub_install/tasks/main.yml"
+
+- name: "put hbase-site.xml to remote"
+  copy: >
+    src={{cntemplet_url}}/hbase-site.xml
+    dest={{spark_home}}/conf/
+
+- name: "mv spark_ext_libs to program dir"
+  shell: >
+    {{pub_set_bash}} &&
+    test -d {{pub_install_apps_root}}/spark_ext_libs &&
+    exit_value=$?;
+    if [ ! $exit_value -ne 0 ];  then
+     rm -r {{pub_install_apps_root}}/spark_ext_libs;
+     mv -f {{spark_home}}/spark_ext_libs {{pub_install_apps_root}};
+    else
+     mv -f {{spark_home}}/spark_ext_libs {{pub_install_apps_root}};
+    fi
+    executable=/bin/bash
+
+- name: "build-essential apt install"
+  apt: pkg=build-essential state=present force=yes
+
+- name: "python-dev apt install"
+  apt: pkg=python-dev state=present force=yes 
+
+- name: "libsasl2-dev"
+  apt: pkg=libsasl2-dev state=present force=yes    
+
+- name: "install python pyhs2 ThriftServer drive to hive and spark"
+  shell: >
+    {{pub_set_bash}} &&
+    pip install sasl --no-index --find-links={{pip_source_address}} &&
+    pip install pyhs2 --no-index --find-links={{pip_source_address}}
+    executable=/bin/bash

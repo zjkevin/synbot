@@ -1,0 +1,8 @@
+---
+#set memory and cpus for vm
+- name: "set memory for {{vm}} on {{hv}}"
+  hosts: "{{hv}}"
+  remote_user: root
+  gather_facts: false
+  roles:
+   - "../../roles/pub_vm_setres"

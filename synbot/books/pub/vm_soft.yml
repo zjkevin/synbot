@@ -1,0 +1,7 @@
+---
+- name: "vm software install"
+  hosts: "{{hosts}}"
+  remote_user: root
+  gather_facts: false
+  roles:
+   - "../../roles/vm_soft"

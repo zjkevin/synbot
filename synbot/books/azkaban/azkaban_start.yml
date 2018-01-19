@@ -1,0 +1,19 @@
+---
+#start azkaban
+- hosts: "{{azkaban}}"
+  remote_user: "{{azkaban_user}}"
+  gather_facts: false
+  vars_files:
+   - "../../roles/azkaban_install/defaults/main.yml"
+   - "../../roles/azkaban_install/vars/main.yml"
+  tasks:
+   - name: "start azkaban"
+     shell: >
+      {{pub_set_bash}} &&
+      cd {{azkaban_home}} &&
+      (nohup bin/azkaban-solo-start.sh > {{azkaban_install_log}}/azkaban-execserver.log 2>&1)
+      executable=/bin/bash
+
+   - name: "waitting..." 
+     wait_for: >
+      state=started timeout={{azkaban_start_timeout}} port={{azkaban_server_port}} delay={{azkaban_start_delay}}

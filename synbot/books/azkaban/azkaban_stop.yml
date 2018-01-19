@@ -1,0 +1,19 @@
+---
+#stop azkaban
+- hosts: "{{hosts}}"
+  remote_user: "{{azkaban_user}}"
+  gather_facts: false
+  vars_files:
+   - "../../roles/azkaban_install/defaults/main.yml"
+   - "../../roles/azkaban_install/vars/main.yml"
+  tasks:
+   - name: "stop azkaban"
+     shell: >
+      {{pub_set_bash}} &&
+      cd {{app_install_home}}/{{app_install_name}} &&
+      bin/azkaban-solo-shutdown.sh > {{app_install_home}}/{{app_install_name}}/azkaban-execserver.log
+      executable=/bin/bash
+
+   - name: "waitting..." 
+     wait_for: >
+      state=stopped timeout={{azkaban_stop_timeout}} port={{azkaban_server_port}} delay={{azkaban_stop_delay}}

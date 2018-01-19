@@ -1,0 +1,21 @@
+---
+- name: "shell cmd unlimited" 
+  hosts: "{{hosts}}"
+  remote_user: root
+  gather_facts: false
+  tasks:
+   - name: "shell cmd"
+     shell: >
+        sed -i '/root soft/'d /etc/security/limits.conf &&
+        sed -i '/root hard/'d /etc/security/limits.conf &&
+        sed -i '/* soft/'d /etc/security/limits.conf &&
+        sed -i '/* hard/'d /etc/security/limits.conf &&        
+        sed -i '$a root soft memlock unlimited' /etc/security/limits.conf &&
+        sed -i '$a root hard memlock unlimited' /etc/security/limits.conf &&
+        sed -i '$a root soft nofile 65535' /etc/security/limits.conf &&
+        sed -i '$a root hard nofile 65535' /etc/security/limits.conf &&
+        sed -i '$a * soft memlock unlimited' /etc/security/limits.conf &&
+        sed -i '$a * hard memlock unlimited' /etc/security/limits.conf &&
+        sed -i '$a * soft nofile 65535' /etc/security/limits.conf &&
+        sed -i '$a * hard nofile 65535' /etc/security/limits.conf
+        executable=/bin/bash

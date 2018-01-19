@@ -1,0 +1,5 @@
+---
+p1n1: nn|/dev/sdc|10G,log|/dev/sdc|10G,tmp|/dev/sdc|5G
+p1n2: es|/dev/sdc|10G,log|/dev/sdc|10G,tmp|/dev/sdc|5G,dn|/dev/sdc|10G,dn|/dev/sdc|10G
+p1n3: es|/dev/sdc|10G,log|/dev/sdc|10G,tmp|/dev/sdc|5G,dn|/dev/sdc|10G,dn|/dev/sdc|10G
+p1n4: es|/dev/sdc|10G,log|/dev/sdc|10G,tmp|/dev/sdc|5G,dn|/dev/sdc|10G,dn|/dev/sdc|10G

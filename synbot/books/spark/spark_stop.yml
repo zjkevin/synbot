@@ -1,0 +1,18 @@
+---
+#stop spark
+- hosts: "{{spark}}"
+  remote_user: "{{spark_user}}"
+  gather_facts: false
+  vars_files:
+   - "../../roles/spark_install/defaults/main.yml"
+   - "../../roles/spark_install/vars/main.yml"
+  tasks:
+   - name: "stop spark"
+     shell: >
+      {{pub_set_bash}} && jps -l | grep spark | awk '{system("kill -TERM "$1)}'
+      executable=/bin/bash
+
+   - name: "waitting..." 
+     wait_for: >
+      state=stopped timeout={{spark_stop_timeout}} port={{spark_server_port}} delay={{spark_stop_delay}}    
+      

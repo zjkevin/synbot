@@ -1,0 +1,4 @@
+---
+#restart spark
+- include: "spark_stop.yml"
+- include: "spark_start.yml"

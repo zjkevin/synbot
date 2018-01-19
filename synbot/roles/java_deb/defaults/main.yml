@@ -1,0 +1,9 @@
+---
+##############################WARNNING###############################
+#default vars
+#UNLESS NESSARY, the following configs should NOT be modified
+#Generally, we should overwrite it in a group var file.
+#####################################################################
+
+java_jdk_deb_url: "http://tsp.apps.s/attachments/download/2116/oracle-jdk1.7u60_amd64.deb"
+java_jdk_home: "/usr/lib/jvm/j2sdk1.7-oracle"

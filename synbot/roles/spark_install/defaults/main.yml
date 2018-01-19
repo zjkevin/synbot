@@ -1,0 +1,19 @@
+---
+##############################WARNNING###############################
+#spark default vars
+#UNLESS NESSARY, the following configs should NOT be modified
+#Generally, we should overwrite it in a group var file.
+#####################################################################
+
+
+spark_home:             "{{pub_install_app_home}}"
+spark_log_dir:          "{{pub_install_log_root}}/spark"
+
+spark_user:              hadoop
+spark_group:             hadoop
+
+spark_server_port:       11000
+spark_start_timeout:     90
+spark_start_delay:       3
+spark_stop_timeout:      90
+spark_stop_delay:        3
